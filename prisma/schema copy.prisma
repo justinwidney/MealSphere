@@ -15,7 +15,7 @@ datasource db {
 }
 
 model User {
-  id        Int   @id @default(autoincrement())
+  id        String   @id @default(uuid())
   username  String   @unique
   password  String
   createdAt DateTime @default(now())
@@ -24,27 +24,58 @@ model User {
 }
 
 model Users_Recipes {
-  id Int  @id @default(autoincrement())
+  id String  @id @default(uuid())
   amount Int
   Sauce Boolean @default(false)
 
   user         User? @relation(fields: [userid], references: [id])
-  userid       Int?
+  userid       String?
     
   recipes        Recipe? @relation(fields: [recipesid], references: [id])
-  recipesid       Int?
+  recipesid       String?
 
   @@unique([userid, recipesid])
 
 }
 
+model Ingredient {
+  id        String   @id @default(uuid())
+  name  String   @unique
+  calories  Int ?
+  fat Int @default(0)
+  protein Int @default(0)
+  calcium Int @default(0)
+  iron Int @default(0)
+  carb Int @default(0)
+  
+  recipeHolder Recipe_Ing[]
+  
+}
+
+
+model Recipe_Ing {
+  id String  @id @default(uuid())
+  amount Int
+  substitue Boolean @default(false)
+
+  recipe         Recipe? @relation(fields: [recipeid], references: [id])
+  recipeid       String?
+    
+  ingredient        Ingredient? @relation(fields: [ingredientid], references: [id])
+  ingredientid       String?
+
+  @@unique([ingredientid, recipeid])
+
+}
+
 model Recipe {
-  id Int @id @default(autoincrement())
+  id String @id @default(uuid())
   recipeName     String @unique
   recipeCookTime Int
   recipeServings Int
   skillLvl       Int?
 
+  recipeIngrediants Recipe_Ing[]
   recipeHolder Users_Recipes[]
   
 }
