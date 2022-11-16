@@ -10,25 +10,17 @@ import {
   enumType,
 } from "nexus";
 
-import { User } from "./models/User";
+import { User, User_Mutation, User_Query } from "./models/User";
 import { Users_Recipes } from "./models/Users_Recipes";
 import { Recipe } from "./models/Recipes";
 
 import { DateTimeResolver } from "graphql-scalars";
-import { context } from "./db";
 
 export const DateTime = asNexusMethod(DateTimeResolver, "date");
 
 const Query = objectType({
   name: "Query",
   definition(t) {
-    t.nonNull.list.nonNull.field("allUsers", {
-      type: "User",
-      resolve: (_parent, _args, context) => {
-        return context.prisma.user.findMany();
-      },
-    });
-
     t.nonNull.list.nonNull.field("allRecipes", {
       type: "Recipe",
       resolve: (_parent, _args, context) => {
@@ -110,11 +102,12 @@ const Mutation = objectType({
       },
       resolve: async (_, args, context) => {
         try {
+          const { userId } = context;
           const recipeHolder = await context.prisma.Users_Recipes.create({
             data: {
               user: {
                 connect: {
-                  id: args.data.id,
+                  id: userId,
                 },
               },
               recipes: {
@@ -165,6 +158,15 @@ const RecipeCreateInput = inputObjectType({
   },
 });
 
+const AuthPayload = objectType({
+  name: "AuthPayload",
+  definition(t) {
+    t.field("user", {
+      type: "User",
+    });
+    t.string("token");
+  },
+});
 const UserCreateInput = inputObjectType({
   name: "UserCreateInput",
   definition(t) {
@@ -184,11 +186,15 @@ const Users_RecipesInput = inputObjectType({
 
 export const schema = makeSchema({
   types: [
+    User_Query,
     Query,
     Mutation,
     Recipe,
     Users_Recipes,
+    User_Mutation,
     User,
+    AuthPayload,
+
     UserUniqueInput,
     UserCreateInput,
     Users_RecipesInput,

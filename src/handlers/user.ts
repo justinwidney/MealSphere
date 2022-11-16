@@ -72,3 +72,60 @@ export class UserResolver {
     return ctx.prisma.user.findMany();
   }
 }
+
+
+const  User_Mutation = objectType({
+  name: "User_Mutation",
+  definition(t) {
+    t.nonNull.field("signupUser", {
+      type: "User",
+      args: {
+        data: nonNull(
+          arg({
+            type: "UserCreateInput",
+          })
+        ),
+      },
+      resolve: async (_, args, context) => {
+        const user = context.prisma.user.create({
+          data: {
+            username: args.data.username,
+            password: await hashPassword(args.data.password)
+          },
+        });
+        const token = createJWT(user)
+        return {token,user}
+
+      },
+    })
+
+    t.nonNull.field("login", {
+      type: "User",
+      args: {
+        data: nonNull(
+          arg({
+            type: "UserCreateInput",
+          })
+        ),
+      },
+      resolve: async (parent, args, context) => {
+        const user = context.prisma.user.findUnique({
+          where: {
+            username: args.data.username,
+          },
+        });
+
+        if(!user){
+          throw new Error('No such user found');
+        }
+
+        const valid = await comparePassword(args.body.password, user.password);
+        
+        if(!valid){
+          throw new Error('Invalid password');
+        }
+        const token = createJWT(user);
+        return token;
+
+      },
+    });
