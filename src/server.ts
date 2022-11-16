@@ -9,39 +9,34 @@ import errorhandler from "errorhandler";
 import { getUserId } from "./modules/utils";
 import { comparePassword } from "./modules/auth";
 import passport from "passport";
+import LocalStrategy from "passport-local";
 import { ApolloServer } from "apollo-server-express";
 import { GraphQLLocalStrategy, buildContext } from "graphql-passport";
-import jwt from "jsonwebtoken";
+
+import { createNewUser, getUser, signin, getPassword } from "./handlers/user";
 
 const isProduction = process.env.NODE_ENV === "production";
 
 const app = express();
 
 passport.serializeUser((user: any, done) => {
-  done(null, user.id);
+  done(null, { id: user.id, username: user.username });
 });
 
-passport.deserializeUser(async (id: number, done) => {
-  const user = await prisma.user.findUnique({
-    where: { id: id },
-  });
-
+passport.deserializeUser((user: any, done) => {
   done(null, user);
 });
 
 passport.use(
-  new GraphQLLocalStrategy(async (id: number, password, done) => {
-    const user = await prisma.user.findUnique({
-      where: { id: id },
-    });
-
-    var error = user ? null : new Error("no matching user");
-    const valid = await comparePassword(password, user!.password);
-
-    if (!valid) {
-      error = new Error("Invalid password");
+  new LocalStrategy(async (username, password, cb) => {
+    const user = await getUser(username);
+    if (!user) {
+      return cb(null, false, { message: "Incorrect username." });
     }
-    done(error, user);
+    if (!(await getPassword(username, password))) {
+      return cb(null, false, { message: "Incorrect password." });
+    }
+    return cb(null, user);
   })
 );
 
@@ -78,6 +73,26 @@ if (!isProduction) {
     });
   });
 }
+
+app.post("/signup", createNewUser);
+//app.post("/signin", signin);
+
+app.post(
+  "/login/password",
+  passport.authenticate("local", {
+    successRedirect: "/",
+    failureRedirect: "/login",
+  })
+);
+
+app.post("/logout", function (req, res, next) {
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
+    }
+    res.redirect("/");
+  });
+});
 
 app.use((err, req, res, next) => {
   res.status(err.status || 500);

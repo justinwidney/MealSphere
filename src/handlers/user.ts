@@ -1,131 +1,63 @@
-import "reflect-metadata";
-import {
-  Resolver,
-  Query,
-  Mutation,
-  Arg,
-  Ctx,
-  FieldResolver,
-  Root,
-  Int,
-  InputType,
-  Field,
-} from "type-graphql";
+import prisma from "../db";
+import { comparePassword, createJWT, hashPassword } from "../modules/auth";
 
-import { Recipe } from "../models/Recipes";
-import { User } from "../models/User";
-import { Context } from "../db";
-import { RecipeCreateInput } from "../handlers/recipe";
-
-@InputType()
-class UserUniqueInput {
-  @Field({ nullable: true })
-  id: number;
-
-  @Field({ nullable: true })
-  email: string;
-}
-
-@InputType()
-class UserCreateInput {
-  @Field()
-  email: string;
-
-  @Field({ nullable: true })
-  name: string;
-
-  @Field((type) => [RecipeCreateInput], { nullable: true })
-  recipes: [RecipeCreateInput];
-}
-
-@Resolver(User)
-export class UserResolver {
-  @FieldResolver()
-  async recipes(
-    @Root() user: User,
-    @Ctx() ctx: Context
-  ): Promise<Recipe[] | null> {
-    return ctx.prisma.user
-      .findUnique({
-        where: {
-          id: user.id,
-        },
-      })
-      .recipes();
-  }
-
-  @Mutation((returns) => User)
-  async signupUser(
-    @Arg("data") data: UserCreateInput,
-    @Ctx() ctx: Context
-  ): Promise<User> {
-    return ctx.prisma.user.create({
+export const createNewUser = async (req, res, next) => {
+  try {
+    const user = await prisma.user.create({
       data: {
-        email: data.email,
-        name: data.name,
+        username: req.body.username,
+        password: await hashPassword(req.body.password),
       },
     });
+
+    const token = createJWT(user);
+    res.json({ token });
+  } catch (e) {
+    e.type = "input";
+    next(e);
+  }
+};
+
+export const signin = async (req, res) => {
+  const user = await prisma.user.findUnique({
+    where: {
+      username: req.body.username,
+    },
+  });
+
+  const isValid = await comparePassword(req.body.password, user.password);
+
+  if (!isValid) {
+    res.state(401);
+    res.json({ message: "nope" });
   }
 
-  @Query(() => [User])
-  async allUsers(@Ctx() ctx: Context) {
-    return ctx.prisma.user.findMany();
+  const token = createJWT(user);
+  res.json({ token });
+};
+
+export const getUser = async (username: string) => {
+  const user = await prisma.user.findUnique({
+    where: {
+      username: username,
+    },
+  });
+
+  return user;
+};
+
+export const getPassword = async (username: string, password: String) => {
+  const user = await prisma.user.findUnique({
+    where: {
+      username: username,
+    },
+  });
+
+  const isValid = await comparePassword(password, user.password);
+
+  if (!isValid) {
+    return false;
   }
-}
 
-
-const  User_Mutation = objectType({
-  name: "User_Mutation",
-  definition(t) {
-    t.nonNull.field("signupUser", {
-      type: "User",
-      args: {
-        data: nonNull(
-          arg({
-            type: "UserCreateInput",
-          })
-        ),
-      },
-      resolve: async (_, args, context) => {
-        const user = context.prisma.user.create({
-          data: {
-            username: args.data.username,
-            password: await hashPassword(args.data.password)
-          },
-        });
-        const token = createJWT(user)
-        return {token,user}
-
-      },
-    })
-
-    t.nonNull.field("login", {
-      type: "User",
-      args: {
-        data: nonNull(
-          arg({
-            type: "UserCreateInput",
-          })
-        ),
-      },
-      resolve: async (parent, args, context) => {
-        const user = context.prisma.user.findUnique({
-          where: {
-            username: args.data.username,
-          },
-        });
-
-        if(!user){
-          throw new Error('No such user found');
-        }
-
-        const valid = await comparePassword(args.body.password, user.password);
-        
-        if(!valid){
-          throw new Error('Invalid password');
-        }
-        const token = createJWT(user);
-        return token;
-
-      },
-    });
+  return true;
+};
