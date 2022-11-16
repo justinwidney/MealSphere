@@ -1,7 +1,8 @@
 import { verify } from "jsonwebtoken";
 
 interface JwtPayload {
-  userId: string;
+  id: number;
+  username: string;
 }
 
 const APP_SECRET = process.env.JWT_SECRET;
@@ -18,12 +19,13 @@ export function getUserId(req, authToken) {
       if (!token) {
         throw new Error("No token found");
       }
-      const { userId } = getTokenPayload(token) as JwtPayload;
-      return userId;
+      const { id } = getTokenPayload(token) as JwtPayload;
+      console.log(id);
+      return id;
     }
   } else if (authToken) {
-    const { userId } = getTokenPayload(authToken) as JwtPayload;
-    return userId;
+    const { id } = getTokenPayload(authToken) as JwtPayload;
+    return id;
   }
 
   throw new Error("Not authenticated");

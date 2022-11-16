@@ -52,44 +52,26 @@ const Query = objectType({
 const Mutation = objectType({
   name: "Mutation",
   definition(t) {
-    t.nonNull.field("signupUser", {
-      type: "User",
+    t.field("createRecipe", {
+      type: "Recipe",
       args: {
         data: nonNull(
           arg({
-            type: "UserCreateInput",
+            type: "RecipeCreateInput",
           })
         ),
       },
       resolve: (_, args, context) => {
-        return context.prisma.user.create({
+        return context.prisma.Recipe.create({
           data: {
-            username: args.data.username,
-            password: args.data.password,
+            recipeName: args.data.recipeName,
+            recipeCookTime: args.data.recipeCookTime,
+            recipeServings: args.data.recipeServings,
+            skillLvl: args.data.skillLvl,
           },
         });
       },
-    }),
-      t.field("createRecipe", {
-        type: "Recipe",
-        args: {
-          data: nonNull(
-            arg({
-              type: "RecipeCreateInput",
-            })
-          ),
-        },
-        resolve: (_, args, context) => {
-          return context.prisma.Recipe.create({
-            data: {
-              recipeName: args.data.recipeName,
-              recipeCookTime: args.data.recipeCookTime,
-              recipeServings: args.data.recipeServings,
-              skillLvl: args.data.skillLvl,
-            },
-          });
-        },
-      });
+    });
 
     t.field("AddRecipe", {
       type: "Users_Recipes",

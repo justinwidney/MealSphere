@@ -34,7 +34,12 @@ export const User_Query = extendType({
     t.field("currentUser", {
       type: "User",
       resolve: (_parent, _args, context) => {
-        return;
+        //console.log(context);
+        return context.prisma.user.findUnique({
+          where: {
+            id: context.id,
+          },
+        });
       },
     });
   },
@@ -53,15 +58,18 @@ export const User_Mutation = extendType({
         ),
       },
       resolve: async (_, args, context) => {
-        const user = await context.prisma.user.create({
-          data: {
-            username: args.data.username,
-            password: await hashPassword(args.data.password),
-          },
-        });
-
-        const token = createJWT(user);
-        return { token, user };
+        try {
+          const user = await context.prisma.user.create({
+            data: {
+              username: args.data.username,
+              password: await hashPassword(args.data.password),
+            },
+          });
+          const token = createJWT(user);
+          return { token, user };
+        } catch (e) {
+          throw new Error("username taken");
+        }
       },
     }),
       t.nonNull.field("login", {
@@ -74,7 +82,7 @@ export const User_Mutation = extendType({
           ),
         },
         resolve: async (_, args, context) => {
-          const user = context.prisma.user.findUnique({
+          const user = await context.prisma.user.findUnique({
             where: {
               username: args.data.username,
             },
@@ -85,7 +93,7 @@ export const User_Mutation = extendType({
           }
 
           const valid = await comparePassword(
-            args.body.password,
+            args.data!.password,
             user.password
           );
 

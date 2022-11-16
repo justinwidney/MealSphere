@@ -13,7 +13,7 @@ export const hashPassword = async (password) => {
 export const createJWT = (user) => {
   const token = jwt.sign(
     { id: user.id, username: user.username },
-    process.env.JWT_SECRET
+    process.env.JWT_SECRET as string
   );
   return token;
 };
@@ -37,7 +37,7 @@ export const protect = (req, res, next) => {
   }
 
   try {
-    const user = jwt.verify(token, process.env.JWT_SECRET);
+    const user = jwt.verify(token, process.env.JWT_SECRET as string);
     req.user = user;
     next();
   } catch (e) {

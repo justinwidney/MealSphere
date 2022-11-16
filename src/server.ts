@@ -1,32 +1,49 @@
 import express from "express";
 import { graphqlHTTP } from "express-graphql";
 import { schema } from "./schema";
-import { prisma } from "./db";
+import prisma from "./db";
 import cors from "cors";
 import morgan from "morgan";
 import session from "express-session";
 import errorhandler from "errorhandler";
 import { getUserId } from "./modules/utils";
-import uuid from "uuid";
-
+import { comparePassword } from "./modules/auth";
 import passport from "passport";
 import { ApolloServer } from "apollo-server-express";
+import { GraphQLLocalStrategy, buildContext } from "graphql-passport";
+import jwt from "jsonwebtoken";
 
 const isProduction = process.env.NODE_ENV === "production";
 
 const app = express();
 
-passport.serializeUser((user, done) => {
+passport.serializeUser((user: any, done) => {
   done(null, user.id);
 });
 
-passport.deserializeUser(async (id, done) => {
+passport.deserializeUser(async (id: number, done) => {
   const user = await prisma.user.findUnique({
-    where: { id: id || undefined },
+    where: { id: id },
   });
 
   done(null, user);
 });
+
+passport.use(
+  new GraphQLLocalStrategy(async (id: number, password, done) => {
+    const user = await prisma.user.findUnique({
+      where: { id: id },
+    });
+
+    var error = user ? null : new Error("no matching user");
+    const valid = await comparePassword(password, user!.password);
+
+    if (!valid) {
+      error = new Error("Invalid password");
+    }
+    done(error, user);
+  })
+);
 
 app.use(cors());
 app.use(morgan("dev"));
@@ -79,7 +96,7 @@ const server = new ApolloServer({
     return {
       ...req,
       prisma,
-      userId: req && req.headers.authorization ? getUserId(req, {}) : null,
+      id: req && req.headers.authorization ? getUserId(req, {}) : null,
     };
   },
   introspection: true, // Disable for production
@@ -105,4 +122,5 @@ server.start().then((res) => {
 });
 //app.use("/api", router);
 
+export { server };
 export default app;
