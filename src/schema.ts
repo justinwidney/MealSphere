@@ -12,9 +12,11 @@ import {
 
 import { User, User_Mutation, User_Query } from "./models/User";
 import { Users_Recipes } from "./models/Users_Recipes";
-import { Recipe } from "./models/Recipes/Recipe_Model";
+import * as Recipe from "./models/Recipes";
+import * as Ingredient from "./models/Ingredients";
 
 import { DateTimeResolver } from "graphql-scalars";
+import { Recipe_Ing } from "./models/Recipe_Ing";
 
 export const DateTime = asNexusMethod(DateTimeResolver, "date");
 
@@ -73,51 +75,17 @@ const Mutation = objectType({
       },
     });
 
-    t.field("AddRecipe", {
-      type: "Users_Recipes",
+    t.field("deleteRecipe", {
+      type: "Recipe",
       args: {
-        data: nonNull(
-          arg({
-            type: "Users_RecipesInput",
-          })
-        ),
+        id: nonNull(intArg()),
       },
-      resolve: async (_, args, context) => {
-        try {
-          const { userId } = context;
-          const recipeHolder = await context.prisma.Users_Recipes.create({
-            data: {
-              user: {
-                connect: {
-                  id: userId,
-                },
-              },
-              recipes: {
-                connect: {
-                  id: args.data.recipesid,
-                },
-              },
-              amount: args.data.amount,
-            },
-          });
-
-          return recipeHolder;
-        } catch (e) {
-          throw new Error(e);
-        }
+      resolve: (_, args, context) => {
+        return context.prisma.Recipe.delete({
+          where: { id: args.id },
+        });
       },
-    }),
-      t.field("deleteRecipe", {
-        type: "Recipe",
-        args: {
-          id: nonNull(intArg()),
-        },
-        resolve: (_, args, context) => {
-          return context.prisma.Recipe.delete({
-            where: { id: args.id },
-          });
-        },
-      });
+    });
   },
 });
 
@@ -126,17 +94,6 @@ const UserUniqueInput = inputObjectType({
   definition(t) {
     t.int("id");
     t.string("email");
-  },
-});
-
-const RecipeCreateInput = inputObjectType({
-  name: "RecipeCreateInput",
-  definition(t) {
-    t.nonNull.string("recipeName");
-    t.string("content");
-    t.nonNull.int("recipeCookTime");
-    t.nonNull.int("recipeServings");
-    t.int("skillLvl");
   },
 });
 
@@ -157,15 +114,6 @@ const UserCreateInput = inputObjectType({
   },
 });
 
-const Users_RecipesInput = inputObjectType({
-  name: "Users_RecipesInput",
-  definition(t) {
-    t.int("id");
-    t.int("amount");
-    t.nonNull.int("recipesid");
-  },
-});
-
 export const schema = makeSchema({
   types: [
     User_Query,
@@ -176,11 +124,10 @@ export const schema = makeSchema({
     User_Mutation,
     User,
     AuthPayload,
-
+    Recipe_Ing,
+    Ingredient,
     UserUniqueInput,
     UserCreateInput,
-    Users_RecipesInput,
-    RecipeCreateInput,
     DateTime,
   ],
   outputs: {

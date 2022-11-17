@@ -20,19 +20,19 @@ model User {
   password  String
   createdAt DateTime @default(now())
 
-  recipes Users_Recipes[]
+  recipes Users_Recipes[] 
 }
 
 model Users_Recipes {
-  id Int  @id @default(autoincrement())
+  @@id([recipesid, userid])
   
   user         User? @relation(fields: [userid], references: [id])
-  userid       Int?
+  userid       Int
     
   recipes        Recipe? @relation(fields: [recipesid], references: [id])
-  recipesid       Int?
+  recipesid       Int
 
-  @@unique([userid, recipesid])
+  @@unique([userid, recipesid], name: "recipeIndentifier")
 
 }
 

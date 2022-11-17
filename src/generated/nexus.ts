@@ -29,6 +29,9 @@ declare global {
 }
 
 export interface NexusGenInputs {
+  RecipeAddInput: { // input type
+    recipeid: number; // Int!
+  }
   RecipeCreateInput: { // input type
     content?: string | null; // String
     recipeCookTime: number; // Int!
@@ -68,6 +71,14 @@ export interface NexusGenObjects {
     token?: string | null; // String
     user?: NexusGenRootTypes['User'] | null; // User
   }
+  Ingredient: { // root type
+    Calories: number; // Int!
+    Fat: number; // Int!
+    IngDescription?: string | null; // String
+    IngName: string; // String!
+    Protein: number; // Int!
+    id: number; // Int!
+  }
   Mutation: {};
   Query: {};
   Recipe: { // root type
@@ -75,6 +86,11 @@ export interface NexusGenObjects {
     recipeCookTime: number; // Int!
     recipeName: string; // String!
     recipeServings: number; // Int!
+  }
+  Recipe_Ing: { // root type
+    Sauce: boolean; // Boolean!
+    amount?: string | null; // String
+    id: number; // Int!
   }
   User: { // root type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
@@ -103,8 +119,17 @@ export interface NexusGenFieldTypes {
     token: string | null; // String
     user: NexusGenRootTypes['User'] | null; // User
   }
+  Ingredient: { // field return type
+    Calories: number; // Int!
+    Fat: number; // Int!
+    IngDescription: string | null; // String
+    IngName: string; // String!
+    Protein: number; // Int!
+    id: number; // Int!
+    recipeHolder: NexusGenRootTypes['Recipe_Ing'][]; // [Recipe_Ing!]!
+  }
   Mutation: { // field return type
-    AddRecipe: NexusGenRootTypes['Users_Recipes'] | null; // Users_Recipes
+    addRecipeToUser: NexusGenRootTypes['Recipe'] | null; // Recipe
     createRecipe: NexusGenRootTypes['Recipe'] | null; // Recipe
     deleteRecipe: NexusGenRootTypes['Recipe'] | null; // Recipe
     login: NexusGenRootTypes['AuthPayload']; // AuthPayload!
@@ -115,14 +140,23 @@ export interface NexusGenFieldTypes {
     allUser_Recipes: NexusGenRootTypes['Users_Recipes'][]; // [Users_Recipes!]!
     allUsers: NexusGenRootTypes['User'][]; // [User!]!
     currentUser: NexusGenRootTypes['User'] | null; // User
+    myRecipes: NexusGenRootTypes['User'][]; // [User!]!
     recipeById: NexusGenRootTypes['Recipe'] | null; // Recipe
   }
   Recipe: { // field return type
     id: number; // Int!
+    ingredients: Array<NexusGenRootTypes['Recipe_Ing'] | null> | null; // [Recipe_Ing]
     recipeCookTime: number; // Int!
     recipeHolder: Array<NexusGenRootTypes['Users_Recipes'] | null> | null; // [Users_Recipes]
     recipeName: string; // String!
     recipeServings: number; // Int!
+  }
+  Recipe_Ing: { // field return type
+    Sauce: boolean; // Boolean!
+    amount: string | null; // String
+    id: number; // Int!
+    ingredient: NexusGenRootTypes['Ingredient'] | null; // Ingredient
+    recipe: NexusGenRootTypes['Recipe'] | null; // Recipe
   }
   User: { // field return type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
@@ -144,8 +178,17 @@ export interface NexusGenFieldTypeNames {
     token: 'String'
     user: 'User'
   }
+  Ingredient: { // field return type name
+    Calories: 'Int'
+    Fat: 'Int'
+    IngDescription: 'String'
+    IngName: 'String'
+    Protein: 'Int'
+    id: 'Int'
+    recipeHolder: 'Recipe_Ing'
+  }
   Mutation: { // field return type name
-    AddRecipe: 'Users_Recipes'
+    addRecipeToUser: 'Recipe'
     createRecipe: 'Recipe'
     deleteRecipe: 'Recipe'
     login: 'AuthPayload'
@@ -156,14 +199,23 @@ export interface NexusGenFieldTypeNames {
     allUser_Recipes: 'Users_Recipes'
     allUsers: 'User'
     currentUser: 'User'
+    myRecipes: 'User'
     recipeById: 'Recipe'
   }
   Recipe: { // field return type name
     id: 'Int'
+    ingredients: 'Recipe_Ing'
     recipeCookTime: 'Int'
     recipeHolder: 'Users_Recipes'
     recipeName: 'String'
     recipeServings: 'Int'
+  }
+  Recipe_Ing: { // field return type name
+    Sauce: 'Boolean'
+    amount: 'String'
+    id: 'Int'
+    ingredient: 'Ingredient'
+    recipe: 'Recipe'
   }
   User: { // field return type name
     createdAt: 'DateTime'
@@ -182,8 +234,8 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
-    AddRecipe: { // args
-      data: NexusGenInputs['Users_RecipesInput']; // Users_RecipesInput!
+    addRecipeToUser: { // args
+      data: NexusGenInputs['RecipeAddInput']; // RecipeAddInput!
     }
     createRecipe: { // args
       data: NexusGenInputs['RecipeCreateInput']; // RecipeCreateInput!

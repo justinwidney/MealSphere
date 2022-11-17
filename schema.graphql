@@ -12,8 +12,18 @@ A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `dat
 """
 scalar DateTime
 
+type Ingredient {
+  Calories: Int!
+  Fat: Int!
+  IngDescription: String
+  IngName: String!
+  Protein: Int!
+  id: Int!
+  recipeHolder: [Recipe_Ing!]!
+}
+
 type Mutation {
-  AddRecipe(data: Users_RecipesInput!): Users_Recipes
+  addRecipeToUser(data: RecipeAddInput!): Recipe
   createRecipe(data: RecipeCreateInput!): Recipe
   deleteRecipe(id: Int!): Recipe
   login(data: UserCreateInput!): AuthPayload!
@@ -25,15 +35,21 @@ type Query {
   allUser_Recipes: [Users_Recipes!]!
   allUsers: [User!]!
   currentUser: User
+  myRecipes: [User!]!
   recipeById(id: Int): Recipe
 }
 
 type Recipe {
   id: Int!
+  ingredients: [Recipe_Ing]
   recipeCookTime: Int!
   recipeHolder: [Users_Recipes]
   recipeName: String!
   recipeServings: Int!
+}
+
+input RecipeAddInput {
+  recipeid: Int!
 }
 
 input RecipeCreateInput {
@@ -42,6 +58,14 @@ input RecipeCreateInput {
   recipeName: String!
   recipeServings: Int!
   skillLvl: Int
+}
+
+type Recipe_Ing {
+  Sauce: Boolean!
+  amount: String
+  id: Int!
+  ingredient: Ingredient
+  recipe: Recipe
 }
 
 type User {
