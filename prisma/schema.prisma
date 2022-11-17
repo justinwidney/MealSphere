@@ -25,9 +25,7 @@ model User {
 
 model Users_Recipes {
   id Int  @id @default(autoincrement())
-  amount Int
-  Sauce Boolean @default(false)
-
+  
   user         User? @relation(fields: [userid], references: [id])
   userid       Int?
     
@@ -44,7 +42,38 @@ model Recipe {
   recipeCookTime Int
   recipeServings Int
   skillLvl       Int?
+  instructions String?
 
   recipeHolder Users_Recipes[]
+  ingredients Recipe_Ing[]
   
+}
+
+
+
+model Ingredient {
+  id Int @id @default(autoincrement())
+  IngName     String @unique
+  IngDescription String
+  Calories Int
+  Fat Int @default(0)
+  Protein Int @default(0)
+
+  recipeHolder Recipe_Ing[]
+  
+}
+
+model Recipe_Ing {
+  id Int  @id @default(autoincrement())
+  amount Int
+  Sauce Boolean @default(false)
+
+  ingredient         Ingredient? @relation(fields: [Ingredientid], references: [id])
+  Ingredientid       Int?
+    
+  recipe        Recipe? @relation(fields: [recipeid], references: [id])
+  recipeid       Int?
+
+  @@unique([Ingredientid, recipeid])
+
 }

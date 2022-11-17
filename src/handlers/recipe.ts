@@ -11,7 +11,7 @@ import {
   InputType,
   Field,
 } from "type-graphql";
-import { Recipe } from "../models/Recipes";
+import { Recipe } from "../models/Recipes/Recipe_Model";
 import { User } from "../models/User";
 import { Context } from "../db";
 

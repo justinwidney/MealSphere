@@ -12,7 +12,16 @@ export const Recipe = objectType({
       resolve: (parent, _, context) => {
         return context.prisma.Recipe.findUnique({
           where: { id: parent.id || undefined },
-        }).Users_Recipes();
+        }).recipeHolder();
+      },
+    });
+
+    t.list.field("ingredients", {
+      type: "Recipe_Ing",
+      resolve: (parent, _, context) => {
+        return context.prisma.Recipe.findUnique({
+          where: { id: parent.id || undefined },
+        }).ingredients();
       },
     });
   },

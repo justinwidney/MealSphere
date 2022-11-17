@@ -8,17 +8,17 @@ export const Users_Recipes = objectType({
     t.field("user", {
       type: "User",
       resolve: (parent, _, context) => {
-        return context.prisma.Users_Recipes.findUnique({
+        return context.prisma.user.findUnique({
           where: { id: parent.id || undefined },
-        }).recipes();
+        });
       },
     });
     t.field("recipes", {
       type: "Recipe",
       resolve: (parent, _, context) => {
-        return context.prisma.Users_Recipes.findUnique({
+        return context.prisma.Recipe.findUnique({
           where: { id: parent.id || undefined },
-        }).user();
+        });
       },
     });
   },

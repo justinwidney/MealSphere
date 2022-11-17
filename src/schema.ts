@@ -12,7 +12,7 @@ import {
 
 import { User, User_Mutation, User_Query } from "./models/User";
 import { Users_Recipes } from "./models/Users_Recipes";
-import { Recipe } from "./models/Recipes";
+import { Recipe } from "./models/Recipes/Recipe_Model";
 
 import { DateTimeResolver } from "graphql-scalars";
 
