@@ -3,6 +3,7 @@
 
 
 type AuthPayload {
+  Errors: FieldError
   token: String
   user: User
 }
@@ -12,8 +13,37 @@ A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `dat
 """
 scalar DateTime
 
+type FieldError {
+  field: String
+  message: String
+}
+
+type Ingredient {
+  Calories: Int!
+  Fat: Int!
+  IngDescription: String
+  IngName: String!
+  Protein: Int!
+  id: Int!
+  recipeHolder: [Recipe_Ing!]!
+}
+
+input IngredientAddInput {
+  recipeid: Int!
+}
+
+input IngredientCreateInput {
+  content: String
+  recipeCookTime: Int!
+  recipeName: String!
+  recipeServings: Int!
+  skillLvl: Int
+}
+
 type Mutation {
-  AddRecipe(data: Users_RecipesInput!): Users_Recipes
+  addIngredientToRecipe(data: IngredientAddInput!): Ingredient
+  addRecipeToUser(data: RecipeAddInput!): Recipe
+  createIngredient(data: IngredientCreateInput!): Ingredient
   createRecipe(data: RecipeCreateInput!): Recipe
   deleteRecipe(id: Int!): Recipe
   login(data: UserCreateInput!): AuthPayload!
@@ -25,15 +55,22 @@ type Query {
   allUser_Recipes: [Users_Recipes!]!
   allUsers: [User!]!
   currentUser: User
+  myIngredients: [User!]!
+  myRecipes: [User!]!
   recipeById(id: Int): Recipe
 }
 
 type Recipe {
   id: Int!
+  ingredients: [Recipe_Ing]
   recipeCookTime: Int!
   recipeHolder: [Users_Recipes]
   recipeName: String!
   recipeServings: Int!
+}
+
+input RecipeAddInput {
+  recipeid: Int!
 }
 
 input RecipeCreateInput {
@@ -42,6 +79,14 @@ input RecipeCreateInput {
   recipeName: String!
   recipeServings: Int!
   skillLvl: Int
+}
+
+type Recipe_Ing {
+  Sauce: Boolean!
+  amount: String
+  id: Int!
+  ingredient: Ingredient
+  recipe: Recipe
 }
 
 type User {
@@ -60,6 +105,12 @@ input UserCreateInput {
 input UserUniqueInput {
   email: String
   id: Int
+}
+
+input Users_IngredientsInput {
+  amount: Int
+  id: Int
+  recipesid: Int!
 }
 
 type Users_Recipes {

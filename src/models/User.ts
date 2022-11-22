@@ -68,7 +68,12 @@ export const User_Mutation = extendType({
           const token = createJWT(user);
           return { token, user };
         } catch (e) {
-          throw new Error("username taken");
+          return {
+            Errors: {
+              field: "username",
+              message: "username already taken",
+            },
+          };
         }
       },
     }),

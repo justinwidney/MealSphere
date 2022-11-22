@@ -123,8 +123,6 @@ const server = new ApolloServer({
 //     schema: schema,
 //     context: ({ req }) => ({
 //       ...req,
-//       logout: () => req.logout(),
-//       getUser: () => req.user,
 //       prisma,
 //       userId: req && req.headers.authorization ? getUserId(req, {}) : null,
 //     }),
@@ -133,7 +131,10 @@ const server = new ApolloServer({
 // );
 
 server.start().then((res) => {
-  server.applyMiddleware({ app });
+  server.applyMiddleware({
+    app,
+    //cors: false,
+  });
 });
 //app.use("/api", router);
 

@@ -1,6 +1,4 @@
-import { objectType, extendType } from "nexus";
-import { nonNull, arg } from "nexus";
-import { comparePassword, createJWT, hashPassword } from "../modules/auth";
+import { objectType } from "nexus";
 
 export const Ingredient = objectType({
   name: "Ingredient",
