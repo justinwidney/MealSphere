@@ -1,13 +1,10 @@
-import { AuthPayload } from "../generated/graphql";
+import { AuthPayload, FieldError } from "../generated/graphql";
 
-export const toErrorMap = (errors: AuthPayload[]) => {
+export const toErrorMap = (errors: FieldError) => {
   const errorMap: Record<string, string> = {};
 
-  Array.from(errors).forEach(({ Errors }) => {
-    if (Errors?.field) {
-      errorMap[Errors.field] = Errors?.message;
-    }
-  });
+  errorMap[errors.field] = errors.message;
 
+  console.log(errorMap, "My ERROR MAP");
   return errorMap;
 };

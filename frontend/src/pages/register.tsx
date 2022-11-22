@@ -104,11 +104,9 @@ export const Register: React.FC<registerProps> = ({}) => {
         initialValues={{ username: "", password: "" }}
         onSubmit={async (values, { setErrors }) => {
           const response = await register(values);
-          console.log(response);
+          console.log(response.data?.signupUser.Errors);
           if (response.data?.signupUser.Errors) {
-            setErrors({ username: "broke" });
-
-            //setErrors(toErrorMap(response.data.signupUser.Errors));
+            setErrors(toErrorMap(response.data.signupUser.Errors));
           }
         }}
       >
