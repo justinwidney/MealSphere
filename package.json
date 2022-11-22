@@ -4,8 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "watch": "tsc -watch",
     "test": "jest --config jest.config.ts src/__tests__",
     "start": "nodemon src/index.ts"
+    
   },
   "repository": {
     "type": "git",

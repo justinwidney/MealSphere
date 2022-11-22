@@ -3,10 +3,18 @@
     "experimentalDecorators": true,
     "sourceMap": true,
     "outDir": "dist",
-    "lib": ["ESNext"],
+    "lib": ["ESNext", "DOM", "ES6"],
     "esModuleInterop": true,
     "strictPropertyInitialization": false,
     "emitDecoratorMetadata": true,
-    "target": "ES5"
-  }
+    "target": "ES5",
+    "jsx": "react-jsx",
+    "allowJs": true,
+    "moduleResolution": "node",
+    "strict": true,
+    "module": "esnext",
+    "allowSyntheticDefaultImports": true
+  },
+  "include": ["./src", "./frontend"],
+  "exclude": ["node_modules"]
 }
