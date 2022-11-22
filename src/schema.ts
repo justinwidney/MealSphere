@@ -17,6 +17,7 @@ import * as Ingredient from "./models/Ingredients";
 
 import { DateTimeResolver } from "graphql-scalars";
 import { Recipe_Ing } from "./models/Recipe_Ing";
+import { type } from "os";
 
 export const DateTime = asNexusMethod(DateTimeResolver, "date");
 
@@ -97,6 +98,14 @@ const UserUniqueInput = inputObjectType({
   },
 });
 
+const FieldError = objectType({
+  name: "FieldError",
+  definition(t) {
+    t.string("field");
+    t.string("message");
+  },
+});
+
 const AuthPayload = objectType({
   name: "AuthPayload",
   definition(t) {
@@ -104,6 +113,9 @@ const AuthPayload = objectType({
       type: "User",
     });
     t.string("token");
+    t.field("Errors", {
+      type: "FieldError",
+    });
   },
 });
 const UserCreateInput = inputObjectType({
@@ -123,6 +135,7 @@ export const schema = makeSchema({
     Users_Recipes,
     User_Mutation,
     User,
+    FieldError,
     AuthPayload,
     Recipe_Ing,
     Ingredient,

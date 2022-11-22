@@ -1,7 +1,7 @@
 import { inputObjectType } from "nexus";
 
-export const RecipeCreateInput = inputObjectType({
-  name: "RecipeCreateInput",
+export const IngredientCreateInput = inputObjectType({
+  name: "IngredientCreateInput",
   definition(t) {
     t.nonNull.string("recipeName");
     t.string("content");
@@ -11,15 +11,15 @@ export const RecipeCreateInput = inputObjectType({
   },
 });
 
-export const RecipeAddInput = inputObjectType({
-  name: "RecipeAddInput",
+export const IngredientAddInput = inputObjectType({
+  name: "IngredientAddInput",
   definition(t) {
     t.nonNull.int("recipeid");
   },
 });
 
-export const Users_RecipesInput = inputObjectType({
-  name: "Users_RecipesInput",
+export const Users_IngredientsInput = inputObjectType({
+  name: "Users_IngredientsInput",
   definition(t) {
     t.int("id");
     t.int("amount");
@@ -27,4 +27,8 @@ export const Users_RecipesInput = inputObjectType({
   },
 });
 
-export default { Users_RecipesInput, RecipeAddInput, RecipeCreateInput };
+export default {
+  Users_IngredientsInput,
+  IngredientAddInput,
+  IngredientCreateInput,
+};

@@ -1,5 +1,5 @@
-import { Recipe } from "./Recipe_Model";
-import { Recipe_Query } from "./Recipe_Queries";
-import { Recipe_Mutation } from "./Recipe_Mutation";
-import * as Types from "./Recipe_Types";
-export { Recipe, Recipe_Query, Recipe_Mutation, Types };
+import { Ingredient } from "./Ingredient_Model";
+import { Ingredient_Query } from "./Ingredient_Queries";
+import { Ingredient_Mutation } from "./Ingredient_Mutation";
+import * as Types from "./Ingredient_Types";
+export { Ingredient, Ingredient_Query, Ingredient_Mutation, Types };

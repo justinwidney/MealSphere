@@ -7,6 +7,8 @@
     "esModuleInterop": true,
     "strictPropertyInitialization": false,
     "emitDecoratorMetadata": true,
-    "target": "ES5"
+    "target": "ES5",
+
+    "skipLibCheck": true
   }
 }

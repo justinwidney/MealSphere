@@ -29,6 +29,16 @@ declare global {
 }
 
 export interface NexusGenInputs {
+  IngredientAddInput: { // input type
+    recipeid: number; // Int!
+  }
+  IngredientCreateInput: { // input type
+    content?: string | null; // String
+    recipeCookTime: number; // Int!
+    recipeName: string; // String!
+    recipeServings: number; // Int!
+    skillLvl?: number | null; // Int
+  }
   RecipeAddInput: { // input type
     recipeid: number; // Int!
   }
@@ -46,6 +56,11 @@ export interface NexusGenInputs {
   UserUniqueInput: { // input type
     email?: string | null; // String
     id?: number | null; // Int
+  }
+  Users_IngredientsInput: { // input type
+    amount?: number | null; // Int
+    id?: number | null; // Int
+    recipesid: number; // Int!
   }
   Users_RecipesInput: { // input type
     amount?: number | null; // Int
@@ -68,8 +83,13 @@ export interface NexusGenScalars {
 
 export interface NexusGenObjects {
   AuthPayload: { // root type
+    Errors?: NexusGenRootTypes['FieldError'] | null; // FieldError
     token?: string | null; // String
     user?: NexusGenRootTypes['User'] | null; // User
+  }
+  FieldError: { // root type
+    field?: string | null; // String
+    message?: string | null; // String
   }
   Ingredient: { // root type
     Calories: number; // Int!
@@ -116,8 +136,13 @@ export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
 
 export interface NexusGenFieldTypes {
   AuthPayload: { // field return type
+    Errors: NexusGenRootTypes['FieldError'] | null; // FieldError
     token: string | null; // String
     user: NexusGenRootTypes['User'] | null; // User
+  }
+  FieldError: { // field return type
+    field: string | null; // String
+    message: string | null; // String
   }
   Ingredient: { // field return type
     Calories: number; // Int!
@@ -129,7 +154,9 @@ export interface NexusGenFieldTypes {
     recipeHolder: NexusGenRootTypes['Recipe_Ing'][]; // [Recipe_Ing!]!
   }
   Mutation: { // field return type
+    addIngredientToRecipe: NexusGenRootTypes['Ingredient'] | null; // Ingredient
     addRecipeToUser: NexusGenRootTypes['Recipe'] | null; // Recipe
+    createIngredient: NexusGenRootTypes['Ingredient'] | null; // Ingredient
     createRecipe: NexusGenRootTypes['Recipe'] | null; // Recipe
     deleteRecipe: NexusGenRootTypes['Recipe'] | null; // Recipe
     login: NexusGenRootTypes['AuthPayload']; // AuthPayload!
@@ -140,6 +167,7 @@ export interface NexusGenFieldTypes {
     allUser_Recipes: NexusGenRootTypes['Users_Recipes'][]; // [Users_Recipes!]!
     allUsers: NexusGenRootTypes['User'][]; // [User!]!
     currentUser: NexusGenRootTypes['User'] | null; // User
+    myIngredients: NexusGenRootTypes['User'][]; // [User!]!
     myRecipes: NexusGenRootTypes['User'][]; // [User!]!
     recipeById: NexusGenRootTypes['Recipe'] | null; // Recipe
   }
@@ -175,8 +203,13 @@ export interface NexusGenFieldTypes {
 
 export interface NexusGenFieldTypeNames {
   AuthPayload: { // field return type name
+    Errors: 'FieldError'
     token: 'String'
     user: 'User'
+  }
+  FieldError: { // field return type name
+    field: 'String'
+    message: 'String'
   }
   Ingredient: { // field return type name
     Calories: 'Int'
@@ -188,7 +221,9 @@ export interface NexusGenFieldTypeNames {
     recipeHolder: 'Recipe_Ing'
   }
   Mutation: { // field return type name
+    addIngredientToRecipe: 'Ingredient'
     addRecipeToUser: 'Recipe'
+    createIngredient: 'Ingredient'
     createRecipe: 'Recipe'
     deleteRecipe: 'Recipe'
     login: 'AuthPayload'
@@ -199,6 +234,7 @@ export interface NexusGenFieldTypeNames {
     allUser_Recipes: 'Users_Recipes'
     allUsers: 'User'
     currentUser: 'User'
+    myIngredients: 'User'
     myRecipes: 'User'
     recipeById: 'Recipe'
   }
@@ -234,8 +270,14 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
+    addIngredientToRecipe: { // args
+      data: NexusGenInputs['IngredientAddInput']; // IngredientAddInput!
+    }
     addRecipeToUser: { // args
       data: NexusGenInputs['RecipeAddInput']; // RecipeAddInput!
+    }
+    createIngredient: { // args
+      data: NexusGenInputs['IngredientCreateInput']; // IngredientCreateInput!
     }
     createRecipe: { // args
       data: NexusGenInputs['RecipeCreateInput']; // RecipeCreateInput!

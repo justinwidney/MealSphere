@@ -3,6 +3,7 @@
 
 
 type AuthPayload {
+  Errors: FieldError
   token: String
   user: User
 }
@@ -11,6 +12,11 @@ type AuthPayload {
 A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
 scalar DateTime
+
+type FieldError {
+  field: String
+  message: String
+}
 
 type Ingredient {
   Calories: Int!
@@ -22,8 +28,22 @@ type Ingredient {
   recipeHolder: [Recipe_Ing!]!
 }
 
+input IngredientAddInput {
+  recipeid: Int!
+}
+
+input IngredientCreateInput {
+  content: String
+  recipeCookTime: Int!
+  recipeName: String!
+  recipeServings: Int!
+  skillLvl: Int
+}
+
 type Mutation {
+  addIngredientToRecipe(data: IngredientAddInput!): Ingredient
   addRecipeToUser(data: RecipeAddInput!): Recipe
+  createIngredient(data: IngredientCreateInput!): Ingredient
   createRecipe(data: RecipeCreateInput!): Recipe
   deleteRecipe(id: Int!): Recipe
   login(data: UserCreateInput!): AuthPayload!
@@ -35,6 +55,7 @@ type Query {
   allUser_Recipes: [Users_Recipes!]!
   allUsers: [User!]!
   currentUser: User
+  myIngredients: [User!]!
   myRecipes: [User!]!
   recipeById(id: Int): Recipe
 }
@@ -84,6 +105,12 @@ input UserCreateInput {
 input UserUniqueInput {
   email: String
   id: Int
+}
+
+input Users_IngredientsInput {
+  amount: Int
+  id: Int
+  recipesid: Int!
 }
 
 type Users_Recipes {
