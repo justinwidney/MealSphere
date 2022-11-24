@@ -30,3 +30,28 @@ export function getUserId(req, authToken) {
 
   throw new Error("Not authenticated");
 }
+
+export const validateRegister = (data) => {
+  if (data.username.length <= 4) {
+    return {
+      field: "username",
+      message: "length must be greater than 2",
+    };
+  }
+
+  if (data.username.includes("@")) {
+    return {
+      field: "username",
+      message: "cannot include an @",
+    };
+  }
+
+  if (data.password.length <= 4) {
+    return {
+      field: "password",
+      message: "length must be greater than 8",
+    };
+  }
+
+  return null;
+};
