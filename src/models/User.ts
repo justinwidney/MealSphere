@@ -1,6 +1,7 @@
 import { objectType, extendType } from "nexus";
 import { nonNull, arg } from "nexus";
 import { comparePassword, createJWT, hashPassword } from "../modules/auth";
+import { validateRegister } from "../modules/utils";
 
 export const User = objectType({
   name: "User",
@@ -58,6 +59,21 @@ export const User_Mutation = extendType({
         ),
       },
       resolve: async (_, args, context) => {
+        const errors = await validateRegister(args.data);
+
+        console.log(errors);
+
+        if (errors) {
+          return {
+            Errors: {
+              field: errors.field,
+              message: errors.message,
+            },
+            user: {},
+            token: {},
+          };
+        }
+
         try {
           const user = await context.prisma.user.create({
             data: {

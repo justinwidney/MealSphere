@@ -9,6 +9,7 @@
     "start": "nodemon src/index.ts"
     
   },
+
   "repository": {
     "type": "git",
     "url": "git+https://github.com/justinwidney/MealSphere.git"

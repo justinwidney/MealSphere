@@ -9,11 +9,7 @@
     "emitDecoratorMetadata": true,
     "target": "ES5",
     "jsx": "react-jsx",
-    "allowJs": true,
-    "moduleResolution": "node",
-    "strict": true,
-    "module": "esnext",
-    "allowSyntheticDefaultImports": true
+    "allowJs": true
   },
   "include": ["./src", "./frontend"],
   "exclude": ["node_modules"]
