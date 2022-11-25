@@ -1,30 +1,42 @@
+import { FieldError } from "../../generated/graphql";
 import { ValidationError, ValidationCode } from "./validation-error";
 
-export function validateUsername({ id }): boolean {
-  if (id.length < 3 || id.length > 32) {
-    throw new ValidationError({
-      code: ValidationCode.ID,
-      message: "User ID must be between 3 and 32 characters.",
-    });
+export function validateUsername(values: {
+  username: string;
+  password: string;
+}) {
+  if (values.username.length < 3 || values.username.length > 32) {
+    return {
+      Errors: {
+        field: "username",
+        message: "username too short",
+      },
+    };
   }
-
-  return true;
+  return {};
 }
 
-export function validateNewUser({ id, password }): boolean {
-  if (id.length < 3 || id.length > 32) {
-    throw new ValidationError({
-      code: ValidationCode.ID,
-      message: "User ID must be between 3 and 32 characters.",
-    });
+export function validateNewUser(values: {
+  username: string;
+  password: string;
+}) {
+  if (values.username.length < 3 || values.username.length > 32) {
+    return {
+      Errors: {
+        field: "username",
+        message: "username too short",
+      },
+    };
   }
 
-  if (password.length < 8 || password.length > 100) {
-    throw new ValidationError({
-      code: ValidationCode.PASSWORD,
-      message: "User password must be longer than 8 characters.",
-    });
+  if (values.password.length < 8 || values.password.length > 100) {
+    return {
+      Errors: {
+        field: "password",
+        message: "password too short",
+      },
+    };
   }
 
-  return true;
+  return {};
 }

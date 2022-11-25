@@ -11,93 +11,75 @@ import {
 import { Wrapper } from "../components/Wrapper";
 import { InputField } from "../components/InputField";
 
-import { Cookies } from "react-cookie";
-
 import { useState } from "react";
 import Router, { NextRouter, useRouter } from "next/router";
 import { validateNewUser } from "../data/validation/user";
 import axios from "axios";
-import { useSignupMutation } from "../generated/graphql";
 import { toErrorMap } from "../utils/toErrorMap";
+import e from "cors";
+import { response } from "express";
+import Error from "next/error";
 
-interface registerProps {}
+interface LoginProps {}
+
+interface Errors {
+  field: string;
+  message: string;
+}
 // The below import defines which components come from formik
 // import { Field, Form, Formik } from 'formik';
 
-export const Register: React.FC<registerProps> = ({}) => {
-  axios.defaults.withCredentials = true;
-
-  //const [loginId, setLoginId] = useState<string>("");
-  //const [loginPassword, setLoginPassword] = useState<string>("");
-
-  const [, register] = useSignupMutation();
-
-  const [modifiedData, setModifiedData] = useState({
-    username: "",
-    password: "",
-  });
+export const Login: React.FC<LoginProps> = ({}) => {
+  axios.defaults.withCredentials = false;
 
   const router = useRouter();
-
-  const [registerId, setRegisterId] = useState<string>("");
-  const [registerPassword, setRegisterPassword] = useState<string>("");
-
   const [validationMessage, setValidationMessage] = useState<string>("");
 
-  const validateLogin = (e: React.FormEvent<HTMLFormElement>): void => {
+  const validateLogin = async (values: any): any => {
     if (false) {
       e.preventDefault();
       Router.push("/login?how=loggedin");
     } else {
       try {
-        validateNewUser({ id: loginId, password: loginPassword });
-      } catch (err: any) {
-        e.preventDefault();
-        setValidationMessage(err.message);
+        const Errors = await validateNewUser(values);
+
+        if (Object.keys(Errors).length) {
+          console.log(Errors);
+          return Errors;
+        }
+
+        const response = await handleSubmit(values);
+
+        return { token: response };
+      } catch (Errors: any) {
+        console.log("got here?", Errors);
+        return { Errors: { field: Errors.field, message: Errors.message } };
       }
     }
   };
 
-  const handleChange = ({ target: { name, value } }) => {
-    setModifiedData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const validateRegister = (e: React.FormEvent<HTMLFormElement>): void => {
-    if (false) {
-      e.preventDefault();
-      Router.push("/login?how=loggedin");
-    } else {
-      try {
-        validateNewUser({
-          id: modifiedData.username,
-          password: modifiedData.password,
-        });
-        handleSubmit(e);
-      } catch (err: any) {
-        e.preventDefault();
-        setValidationMessage(err.message);
-      }
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  const handleSubmit = async (values: any) => {
     const payload = {
-      username: modifiedData.username,
-      password: modifiedData.password,
+      username: values.username,
+      password: values.password,
     };
     try {
       const response = await axios.post(
-        "http://localhost:4000/signup",
-        payload
+        "http://localhost:4000/login/password",
+        payload,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
       );
-      console.log(response.data);
+
+      console.log(response, "check");
+      localStorage.setItem("token", response.data.token);
+      axios.defaults.headers.common["Authorization"] =
+        "Bearer" + response.data.token;
+      return response.data.token;
     } catch (e) {
-      console.log(e);
+      console.log(e, "the error");
+      throw e.response.data.Errors;
     }
   };
 
@@ -107,11 +89,15 @@ export const Register: React.FC<registerProps> = ({}) => {
       <Formik
         initialValues={{ username: "", password: "" }}
         onSubmit={async (values, { setErrors }) => {
-          const response = await register(values);
-          console.log(response.data?.signupUser.Errors);
-          if (response.data?.signupUser.Errors) {
-            setErrors(toErrorMap(response.data.signupUser.Errors));
-          } else if (response.data?.signupUser.user) {
+          const response = await validateLogin(values);
+
+          console.log(response, "did i get these");
+
+          if (response?.Errors) {
+            console.log("Setting Errors");
+
+            setErrors(toErrorMap(response.Errors));
+          } else if (response.token) {
             router.push("/");
           }
         }}
@@ -143,7 +129,7 @@ export const Register: React.FC<registerProps> = ({}) => {
                 isLoading={isSubmitting}
                 colorScheme="teal"
               >
-                Register
+                Login
               </Button>
             </FormControl>
           </Form>
@@ -153,4 +139,4 @@ export const Register: React.FC<registerProps> = ({}) => {
   );
 };
 
-export default Register;
+export default Login;

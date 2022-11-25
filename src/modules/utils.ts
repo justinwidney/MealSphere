@@ -8,18 +8,25 @@ interface JwtPayload {
 const APP_SECRET = process.env.JWT_SECRET;
 
 function getTokenPayload(token) {
-  return verify(token, APP_SECRET);
+  console.log(token, "got here");
+
+  let SECRET = process.env.JWT_SECRET as string;
+
+  return verify(token, SECRET);
 }
 
 export function getUserId(req, authToken) {
   if (req) {
     const authHeader = req.headers.authorization;
+
     if (authHeader) {
       const token = authHeader.replace("Bearer ", "");
+
       if (!token) {
         throw new Error("No token found");
       }
       const { id } = getTokenPayload(token) as JwtPayload;
+
       console.log(id);
       return id;
     }
@@ -49,7 +56,7 @@ export const validateRegister = (data) => {
   if (data.password.length <= 4) {
     return {
       field: "password",
-      message: "length must be greater than 8",
+      message: "length must be greater than 4",
     };
   }
 

@@ -1,5 +1,13 @@
-const Index = () => {
-  <div>Hello World</div>;
+import { NavBar } from "../components/NavBar";
+
+interface IndexProps {}
+
+export const Index: React.FC<IndexProps> = ({}) => {
+  return (
+    <>
+      <NavBar />
+    </>
+  );
 };
 
 export default Index;

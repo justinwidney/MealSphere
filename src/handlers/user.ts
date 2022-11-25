@@ -27,11 +27,18 @@ export const signin = async (req, res) => {
     },
   });
 
+  if (!user) {
+    res.status(401);
+    res.json({ Errors: { field: "username", message: "user doesn't exist" } });
+    return;
+  }
+
   const isValid = await comparePassword(req.body.password, user.password);
 
   if (!isValid) {
-    res.state(401);
-    res.json({ message: "nope" });
+    res.status(401);
+    res.json({ Errors: { field: "password", message: "incorrect password" } });
+    return;
   }
 
   const token = createJWT(user);

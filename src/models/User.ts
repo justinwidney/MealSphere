@@ -29,16 +29,17 @@ export const User_Query = extendType({
     t.nonNull.list.nonNull.field("allUsers", {
       type: "User",
       resolve: (_parent, _args, context) => {
+        console.log("test");
         return context.prisma.user.findMany();
       },
     });
     t.field("currentUser", {
       type: "User",
-      resolve: (_parent, _args, context) => {
-        //console.log(context);
-        return context.prisma.user.findUnique({
+      resolve: async (_parent, _args, context) => {
+        console.log(context.userId, "my request");
+        return await context.prisma.user.findUnique({
           where: {
-            id: context.id,
+            id: context.userId,
           },
         });
       },
@@ -63,6 +64,8 @@ export const User_Mutation = extendType({
 
         console.log(errors);
 
+        const { req } = context;
+
         if (errors) {
           return {
             Errors: {
@@ -82,8 +85,11 @@ export const User_Mutation = extendType({
             },
           });
           const token = createJWT(user);
+
           return { token, user };
         } catch (e) {
+          console.log(e);
+
           return {
             Errors: {
               field: "username",

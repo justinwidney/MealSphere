@@ -10,6 +10,7 @@ import { getUserId } from "./modules/utils";
 import { comparePassword } from "./modules/auth";
 import passport from "passport";
 import LocalStrategy from "passport-local";
+import BearerStrategy from "passport-http-bearer";
 import { ApolloServer } from "apollo-server-express";
 import { GraphQLLocalStrategy, buildContext } from "graphql-passport";
 
@@ -28,6 +29,21 @@ passport.deserializeUser((user: any, done) => {
 });
 
 passport.use(
+  new BearerStrategy(function (token, done) {
+    getUserId({ token: token }, function (err, user) {
+      if (err) {
+        console.log(err);
+        return done(err);
+      }
+      if (!user) {
+        return done(null, false);
+      }
+      return done(null, user, { scope: "all" });
+    });
+  })
+);
+
+passport.use(
   new LocalStrategy(async (username, password, cb) => {
     const user = await getUser(username);
     if (!user) {
@@ -36,6 +52,9 @@ passport.use(
     if (!(await getPassword(username, password))) {
       return cb(null, false, { message: "Incorrect password." });
     }
+
+    console.log(user);
+
     return cb(null, user);
   })
 );
@@ -79,11 +98,29 @@ app.post("/signup", createNewUser);
 
 app.post(
   "/login/password",
-  passport.authenticate("local", {
-    successRedirect: "/",
-    failureRedirect: "/login",
-  })
+
+  function (req, res, next) {
+    if (req) {
+      return signin(req, res);
+      //res.json(req.user);
+    } else {
+      // handle errors here, decide what you want to send back to your front end
+      // so that it knows the user wasn't found
+      res.statusCode = 503;
+      res.send({ message: "Not Found" });
+    }
+  }
 );
+// app.post(
+//   "/login/password",
+//   passport.authenticate("local", {
+//     failureRedirect: "/login",
+//     failureMessage: true,
+//   }),
+//   function (req, res) {
+//     res.redirect("/~" + req.user);
+//   }
+// );
 
 app.post("/logout", function (req, res, next) {
   req.logout(function (err) {
@@ -111,7 +148,7 @@ const server = new ApolloServer({
     return {
       ...req,
       prisma,
-      id: req && req.headers.authorization ? getUserId(req, {}) : null,
+      userId: req && req.headers.authorization ? getUserId(req, {}) : null,
     };
   },
   introspection: true, // Disable for production
@@ -133,7 +170,7 @@ const server = new ApolloServer({
 server.start().then((res) => {
   server.applyMiddleware({
     app,
-    //cors: false,
+    cors: false,
   });
 });
 //app.use("/api", router);

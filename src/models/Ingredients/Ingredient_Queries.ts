@@ -20,16 +20,5 @@ export const Ingredient_Query = extendType({
         });
       },
     });
-    t.field("currentUser", {
-      type: "User",
-      resolve: (_parent, _args, context) => {
-        //console.log(context);
-        return context.prisma.user.findUnique({
-          where: {
-            id: context.id,
-          },
-        });
-      },
-    });
   },
 });

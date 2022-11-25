@@ -11,8 +11,7 @@
     "jsx": "react-jsx",
     "allowJs": true,
     "moduleResolution": "node",
-    "strict": true,
-    "module": "esnext",
+
     "allowSyntheticDefaultImports": true
   },
   "include": ["./src", "./frontend"],
