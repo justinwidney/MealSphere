@@ -29,6 +29,10 @@ declare global {
 }
 
 export interface NexusGenInputs {
+  ForgotPasswordInput: { // input type
+    email: string; // String!
+    username: string; // String!
+  }
   IngredientAddInput: { // input type
     recipeid: number; // Int!
   }
@@ -50,6 +54,7 @@ export interface NexusGenInputs {
     skillLvl?: number | null; // Int
   }
   UserCreateInput: { // input type
+    email: string; // String!
     password: string; // String!
     username: string; // String!
   }
@@ -114,6 +119,7 @@ export interface NexusGenObjects {
   }
   User: { // root type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
+    email: string; // String!
     id: number; // Int!
     password: string; // String!
     username?: string | null; // String
@@ -159,6 +165,7 @@ export interface NexusGenFieldTypes {
     createIngredient: NexusGenRootTypes['Ingredient'] | null; // Ingredient
     createRecipe: NexusGenRootTypes['Recipe'] | null; // Recipe
     deleteRecipe: NexusGenRootTypes['Recipe'] | null; // Recipe
+    forgotPassword: NexusGenRootTypes['User']; // User!
     login: NexusGenRootTypes['AuthPayload']; // AuthPayload!
     signupUser: NexusGenRootTypes['AuthPayload']; // AuthPayload!
   }
@@ -188,6 +195,7 @@ export interface NexusGenFieldTypes {
   }
   User: { // field return type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
+    email: string; // String!
     id: number; // Int!
     password: string; // String!
     recipes: NexusGenRootTypes['Users_Recipes'][]; // [Users_Recipes!]!
@@ -226,6 +234,7 @@ export interface NexusGenFieldTypeNames {
     createIngredient: 'Ingredient'
     createRecipe: 'Recipe'
     deleteRecipe: 'Recipe'
+    forgotPassword: 'User'
     login: 'AuthPayload'
     signupUser: 'AuthPayload'
   }
@@ -255,6 +264,7 @@ export interface NexusGenFieldTypeNames {
   }
   User: { // field return type name
     createdAt: 'DateTime'
+    email: 'String'
     id: 'Int'
     password: 'String'
     recipes: 'Users_Recipes'
@@ -284,6 +294,9 @@ export interface NexusGenArgTypes {
     }
     deleteRecipe: { // args
       id: number; // Int!
+    }
+    forgotPassword: { // args
+      data: NexusGenInputs['ForgotPasswordInput']; // ForgotPasswordInput!
     }
     login: { // args
       data: NexusGenInputs['UserCreateInput']; // UserCreateInput!

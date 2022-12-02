@@ -18,6 +18,11 @@ type FieldError {
   message: String
 }
 
+input ForgotPasswordInput {
+  email: String!
+  username: String!
+}
+
 type Ingredient {
   Calories: Int!
   Fat: Int!
@@ -46,6 +51,7 @@ type Mutation {
   createIngredient(data: IngredientCreateInput!): Ingredient
   createRecipe(data: RecipeCreateInput!): Recipe
   deleteRecipe(id: Int!): Recipe
+  forgotPassword(data: ForgotPasswordInput!): User!
   login(data: UserCreateInput!): AuthPayload!
   signupUser(data: UserCreateInput!): AuthPayload!
 }
@@ -91,6 +97,7 @@ type Recipe_Ing {
 
 type User {
   createdAt: DateTime!
+  email: String!
   id: Int!
   password: String!
   recipes: [Users_Recipes!]!
@@ -98,6 +105,7 @@ type User {
 }
 
 input UserCreateInput {
+  email: String!
   password: String!
   username: String!
 }

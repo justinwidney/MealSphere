@@ -3,27 +3,29 @@ import { comparePassword, createJWT, hashPassword } from "../modules/auth";
 
 export const createNewUser = async (req, res, next) => {
   try {
-    console.log(req.body);
     const user = await prisma.user.create({
       data: {
         username: req.body.username,
         password: await hashPassword(req.body.password),
+        email: req.body.email,
       },
     });
-
     const token = createJWT(user);
     res.json({ token });
-  } catch (e) {
-    e.type = "input";
-    console.log(e);
-    next(e);
+    return;
+  } catch (error) {
+    res.status(401);
+    res.json({
+      Errors: { field: "username", message: "username is taken" },
+    });
+    return;
   }
 };
 
 export const signin = async (req, res) => {
-  const user = await prisma.user.findUnique({
+  const user = await prisma.user.findFirst({
     where: {
-      username: req.body.username,
+      OR: [{ username: req.body.username }, { email: req.body.username }],
     },
   });
 

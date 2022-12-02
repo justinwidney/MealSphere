@@ -9,6 +9,7 @@ export const User = objectType({
     t.nonNull.int("id");
     t.string("username");
     t.nonNull.string("password");
+    t.nonNull.string("email");
     t.nonNull.field("createdAt", { type: "DateTime" });
     t.nonNull.list.nonNull.field("recipes", {
       type: "Users_Recipes",
@@ -82,6 +83,7 @@ export const User_Mutation = extendType({
             data: {
               username: args.data.username,
               password: await hashPassword(args.data.password),
+              email: args.data.email,
             },
           });
           const token = createJWT(user);
@@ -129,6 +131,29 @@ export const User_Mutation = extendType({
           }
           const token = createJWT(user);
           return { token, user };
+        },
+      }),
+      t.nonNull.field("forgotPassword", {
+        type: "User",
+        args: {
+          data: nonNull(
+            arg({
+              type: "ForgotPasswordInput",
+            })
+          ),
+        },
+        resolve: async (_parent, args, context) => {
+          const user = await context.prisma.user.findUnique({
+            where: {
+              email: args.data.email,
+            },
+          });
+
+          if (!user) {
+            return true;
+          }
+
+          return true;
         },
       });
   },

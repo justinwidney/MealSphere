@@ -123,6 +123,15 @@ const UserCreateInput = inputObjectType({
   definition(t) {
     t.nonNull.string("password");
     t.nonNull.string("username");
+    t.nonNull.string("email");
+  },
+});
+
+const ForgotPasswordInput = inputObjectType({
+  name: "ForgotPasswordInput",
+  definition(t) {
+    t.nonNull.string("email");
+    t.nonNull.string("username");
   },
 });
 
@@ -141,6 +150,7 @@ export const schema = makeSchema({
     Ingredient,
     UserUniqueInput,
     UserCreateInput,
+    ForgotPasswordInput,
     DateTime,
   ],
   outputs: {

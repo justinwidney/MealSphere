@@ -197,6 +197,11 @@ export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type CurrentUserQuery = { __typename?: 'Query', currentUser?: { __typename?: 'User', id: number, username?: string | null } | null };
 
+export type RecipesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type RecipesQuery = { __typename?: 'Query', allRecipes: Array<{ __typename?: 'Recipe', id: number, recipeName: string }> };
+
 
 export const SignupDocument = gql`
     mutation Signup($username: String!, $password: String!) {
@@ -228,4 +233,16 @@ export const CurrentUserDocument = gql`
 
 export function useCurrentUserQuery(options?: Omit<Urql.UseQueryArgs<CurrentUserQueryVariables>, 'query'>) {
   return Urql.useQuery<CurrentUserQuery, CurrentUserQueryVariables>({ query: CurrentUserDocument, ...options });
+};
+export const RecipesDocument = gql`
+    query Recipes {
+  allRecipes {
+    id
+    recipeName
+  }
+}
+    `;
+
+export function useRecipesQuery(options?: Omit<Urql.UseQueryArgs<RecipesQueryVariables>, 'query'>) {
+  return Urql.useQuery<RecipesQuery, RecipesQueryVariables>({ query: RecipesDocument, ...options });
 };

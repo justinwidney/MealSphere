@@ -25,79 +25,52 @@ interface registerProps {}
 // import { Field, Form, Formik } from 'formik';
 
 export const Register: React.FC<registerProps> = ({}) => {
-  axios.defaults.withCredentials = true;
-
-  //const [loginId, setLoginId] = useState<string>("");
-  //const [loginPassword, setLoginPassword] = useState<string>("");
-
-  const [, register] = useSignupMutation();
-
-  const [modifiedData, setModifiedData] = useState({
-    username: "",
-    password: "",
-  });
+  axios.defaults.withCredentials = false;
 
   const router = useRouter();
-
-  const [registerId, setRegisterId] = useState<string>("");
-  const [registerPassword, setRegisterPassword] = useState<string>("");
-
   const [validationMessage, setValidationMessage] = useState<string>("");
 
-  const validateLogin = (e: React.FormEvent<HTMLFormElement>): void => {
-    if (false) {
-      e.preventDefault();
-      Router.push("/login?how=loggedin");
-    } else {
-      try {
-        validateNewUser({ id: loginId, password: loginPassword });
-      } catch (err: any) {
-        e.preventDefault();
-        setValidationMessage(err.message);
+  const validateRegister = async (values: any): any => {
+    try {
+      const Errors = await validateNewUser(values);
+
+      if (Object.keys(Errors).length) {
+        console.log(Errors);
+        return Errors;
       }
+
+      const response = await handleSubmit(values);
+
+      return { token: response };
+    } catch (Errors: any) {
+      console.log("got here?", Errors);
+      return { Errors: { field: Errors.field, message: Errors.message } };
     }
   };
 
-  const handleChange = ({ target: { name, value } }) => {
-    setModifiedData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const validateRegister = (e: React.FormEvent<HTMLFormElement>): void => {
-    if (false) {
-      e.preventDefault();
-      Router.push("/login?how=loggedin");
-    } else {
-      try {
-        validateNewUser({
-          id: modifiedData.username,
-          password: modifiedData.password,
-        });
-        handleSubmit(e);
-      } catch (err: any) {
-        e.preventDefault();
-        setValidationMessage(err.message);
-      }
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  const handleSubmit = async (values: any) => {
     const payload = {
-      username: modifiedData.username,
-      password: modifiedData.password,
+      username: values.username,
+      password: values.password,
+      email: values.email,
     };
     try {
       const response = await axios.post(
         "http://localhost:4000/signup",
-        payload
+        payload,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
       );
-      console.log(response.data);
+
+      console.log(response, "check");
+      localStorage.setItem("token", response.data.token);
+      axios.defaults.headers.common["Authorization"] =
+        "Bearer" + response.data.token;
+      return response.data.token;
     } catch (e) {
-      console.log(e);
+      console.log(e, "the error");
+      throw e.response.data.Errors;
     }
   };
 
@@ -105,13 +78,12 @@ export const Register: React.FC<registerProps> = ({}) => {
     <Wrapper variant="small">
       {validationMessage && <p>{validationMessage}</p>}
       <Formik
-        initialValues={{ username: "", password: "" }}
+        initialValues={{ username: "", password: "", email: "" }}
         onSubmit={async (values, { setErrors }) => {
-          const response = await register(values);
-          console.log(response.data?.signupUser.Errors);
-          if (response.data?.signupUser.Errors) {
-            setErrors(toErrorMap(response.data.signupUser.Errors));
-          } else if (response.data?.signupUser.user) {
+          const response = await validateRegister(values);
+          if (response?.Errors) {
+            setErrors(toErrorMap(response.Errors));
+          } else if (response.token) {
             router.push("/");
           }
         }}
@@ -120,12 +92,23 @@ export const Register: React.FC<registerProps> = ({}) => {
           <Form //onSubmit={validateRegister}>
           >
             <FormControl>
-              <Box mb={4}>
+              <Box mb={2}>
                 <InputField
                   name="username"
                   placeholder="username"
                   label="Username"
                   //value={modifiedData.username}
+                  //onChange={handleChange}
+                ></InputField>
+              </Box>
+              <Box mb={2}>
+                <InputField
+                  name="email"
+                  placeholder="email"
+                  label="email"
+                  type="email"
+
+                  //value={modifiedData.password}
                   //onChange={handleChange}
                 ></InputField>
               </Box>
@@ -137,6 +120,7 @@ export const Register: React.FC<registerProps> = ({}) => {
                 //value={modifiedData.password}
                 //onChange={handleChange}
               ></InputField>
+
               <Button
                 mt={4}
                 type="submit"

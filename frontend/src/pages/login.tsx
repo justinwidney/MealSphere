@@ -13,12 +13,11 @@ import { InputField } from "../components/InputField";
 
 import { useState } from "react";
 import Router, { NextRouter, useRouter } from "next/router";
-import { validateNewUser } from "../data/validation/user";
+import { validateNewLogin } from "../data/validation/user";
 import axios from "axios";
 import { toErrorMap } from "../utils/toErrorMap";
-import e from "cors";
-import { response } from "express";
-import Error from "next/error";
+
+import { useUser } from "../data/hooks/hooks";
 
 interface LoginProps {}
 
@@ -32,29 +31,26 @@ interface Errors {
 export const Login: React.FC<LoginProps> = ({}) => {
   axios.defaults.withCredentials = false;
 
+  useUser({ redirectTo: "/", redirectIfFound: true });
+
   const router = useRouter();
   const [validationMessage, setValidationMessage] = useState<string>("");
 
-  const validateLogin = async (values: any): any => {
-    if (false) {
-      e.preventDefault();
-      Router.push("/login?how=loggedin");
-    } else {
-      try {
-        const Errors = await validateNewUser(values);
+  const validateLogin = async (values: any) => {
+    try {
+      const Errors = await validateNewLogin(values);
 
-        if (Object.keys(Errors).length) {
-          console.log(Errors);
-          return Errors;
-        }
-
-        const response = await handleSubmit(values);
-
-        return { token: response };
-      } catch (Errors: any) {
-        console.log("got here?", Errors);
-        return { Errors: { field: Errors.field, message: Errors.message } };
+      if (Object.keys(Errors).length) {
+        console.log(Errors);
+        return Errors;
       }
+
+      const response = await handleSubmit(values);
+
+      return { token: response };
+    } catch (Errors: any) {
+      console.log("got here?", Errors);
+      return { Errors: { field: Errors.field, message: Errors.message } };
     }
   };
 
@@ -90,12 +86,7 @@ export const Login: React.FC<LoginProps> = ({}) => {
         initialValues={{ username: "", password: "" }}
         onSubmit={async (values, { setErrors }) => {
           const response = await validateLogin(values);
-
-          console.log(response, "did i get these");
-
           if (response?.Errors) {
-            console.log("Setting Errors");
-
             setErrors(toErrorMap(response.Errors));
           } else if (response.token) {
             router.push("/");

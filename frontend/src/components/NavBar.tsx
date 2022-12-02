@@ -1,19 +1,22 @@
 import { Box, Flex, Link, Button } from "@chakra-ui/react";
-import React from "react";
+import React, { useState } from "react";
 import NextLink from "next/link";
-import { useCurrentUserQuery } from "../generated/graphql";
+import { useUser } from "../data/hooks/hooks";
+import { useRouter } from "next/router";
 interface NavBarProps {}
 
 export const NavBar: React.FC<NavBarProps> = ({}) => {
-  const [{ data, fetching }] = useCurrentUserQuery();
-
+  const user = useUser({ redirectTo: "/", redirectIfFound: true });
   let body = null;
 
-  if (fetching) {
-    console.log("fetching");
-  } else if (!data?.currentUser) {
-    console.log(data);
+  const router = useRouter();
 
+  const handleSubmit = async () => {
+    localStorage.removeItem("token");
+    router.push("/");
+  };
+
+  if (!user) {
     body = (
       <>
         <NextLink href="/login" legacyBehavior passHref>
@@ -27,14 +30,17 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
   } else {
     body = (
       <Flex>
-        <Box mr={2}>{data.currentUser.id}</Box>
-        <Button variant="link">Logout</Button>;
+        <Box mr={2}>{user}</Box>
+        <Button onClick={handleSubmit} variant="link">
+          Logout
+        </Button>
+        ;
       </Flex>
     );
   }
 
   return (
-    <Flex bg="tomato" p={4} ml={"auto"}>
+    <Flex bg="tan" p={4} ml={"auto"}>
       <Box ml={"auto"}>{body}</Box>
     </Flex>
   );
