@@ -10,6 +10,7 @@ export const Recipe_Mutation = extendType({
       args: {
         data: nonNull(
           arg({
+            //FIELDS: (recipeName / content / recipeCookTime / recipeServings / skillLvl)
             type: "RecipeCreateInput",
           })
         ),
@@ -35,40 +36,43 @@ export const Recipe_Mutation = extendType({
         ),
       },
       resolve: async (_, args, context) => {
-        console.log(context.id);
-
-        const new_recipe = await context.prisma.Users_Recipes.upsert({
-          where: {
-            recipeIndentifier: {
-              userid: context.id,
-              recipesid: args.data.recipeid,
-            },
-          },
-          update: {
-            userid: context.id,
-            recipesid: args.data.recipeid,
-          },
-          create: {
-            userid: context.id,
-            recipesid: args.data.recipeid,
-          },
-        });
-
-        console.log(new_recipe);
-
-        return await context.prisma.user.update({
-          where: { id: context.id },
-          data: {
-            recipes: {
-              connect: {
+        // Update or Insert User Recipes
+        // Only go through if all transactions work
+        await context.prisma.$transaction(
+          [
+            context.prisma.Users_Recipes.upsert({
+              where: {
                 recipeIndentifier: {
-                  userid: context.id,
+                  userid: context.userId,
                   recipesid: args.data.recipeid,
                 },
               },
-            },
-          },
-        });
+              update: {
+                userid: context.userId,
+                recipesid: args.data.recipeid,
+              },
+              create: {
+                userid: context.userId,
+                recipesid: args.data.recipeid,
+              },
+            }),
+
+            context.prisma.user.update({
+              where: { id: context.userId },
+              data: {
+                recipes: {
+                  connect: {
+                    recipeIndentifier: {
+                      userid: context.userId,
+                      recipesid: args.data.recipeid,
+                    },
+                  },
+                },
+              },
+            }),
+          ],
+          {} // isolation Level
+        );
       },
     });
   },

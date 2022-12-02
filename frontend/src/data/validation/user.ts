@@ -79,3 +79,18 @@ export function validateNewLogin(values: {
 
   return {};
 }
+
+export function validateNewPassword(values: { password: string }) {
+  console.log(values.password, "my length");
+
+  if (values.password.length < 8 || values.password.length > 100) {
+    return {
+      Errors: {
+        field: "password",
+        message: "password too short",
+      },
+    };
+  }
+
+  return {};
+}

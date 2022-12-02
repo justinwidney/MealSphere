@@ -13,12 +13,23 @@ import LocalStrategy from "passport-local";
 import BearerStrategy from "passport-http-bearer";
 import { ApolloServer } from "apollo-server-express";
 import { GraphQLLocalStrategy, buildContext } from "graphql-passport";
+import Redis from "ioredis";
+import connectRedis from "connect-redis";
 
-import { createNewUser, getUser, signin, getPassword } from "./handlers/user";
+import {
+  createNewUser,
+  getUser,
+  signin,
+  getPassword,
+  changePassword,
+} from "./handlers/user";
 
 const isProduction = process.env.NODE_ENV === "production";
 
 const app = express();
+
+//const redis = new Redis();
+//const RedisStore = connectRedis(session);
 
 passport.serializeUser((user: any, done) => {
   done(null, { id: user.id, username: user.username });
@@ -27,6 +38,15 @@ passport.serializeUser((user: any, done) => {
 passport.deserializeUser((user: any, done) => {
   done(null, user);
 });
+
+// app.use(
+//  session({
+//    store: new RedisStore({ client: redis }),
+//    saveUninitialized: false,
+//    secret: "keyboard cat",
+//    resave: false,
+//  })
+// );
 
 passport.use(
   new BearerStrategy(function (token, done) {
@@ -111,6 +131,22 @@ app.post(
     }
   }
 );
+app.post(
+  "/change/password",
+
+  function (req, res, next) {
+    if (req) {
+      return changePassword(req, res);
+      //res.json(req.user);
+    } else {
+      // handle errors here, decide what you want to send back to your front end
+      // so that it knows the user wasn't found
+      res.statusCode = 503;
+      res.send({ message: "Not Found" });
+    }
+  }
+);
+
 // app.post(
 //   "/login/password",
 //   passport.authenticate("local", {
@@ -147,6 +183,7 @@ const server = new ApolloServer({
   context: ({ req }) => {
     return {
       ...req,
+      //redis,
       prisma,
       userId: req && req.headers.authorization ? getUserId(req, {}) : null,
     };

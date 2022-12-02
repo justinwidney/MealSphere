@@ -7,6 +7,8 @@ import {
   Input,
   Box,
   Button,
+  Link,
+  Flex,
 } from "@chakra-ui/react";
 import { Wrapper } from "../components/Wrapper";
 import { InputField } from "../components/InputField";
@@ -18,6 +20,7 @@ import axios from "axios";
 import { toErrorMap } from "../utils/toErrorMap";
 
 import { useUser } from "../data/hooks/hooks";
+import NextLink from "next/link";
 
 interface LoginProps {}
 
@@ -114,6 +117,11 @@ export const Login: React.FC<LoginProps> = ({}) => {
                 //value={modifiedData.password}
                 //onChange={handleChange}
               ></InputField>
+              <Flex mt={1}>
+                <NextLink href="/login" legacyBehavior passHref>
+                  <Link ml="auto">forgot password?</Link>
+                </NextLink>
+              </Flex>
               <Button
                 mt={4}
                 type="submit"

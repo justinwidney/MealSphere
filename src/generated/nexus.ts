@@ -29,6 +29,10 @@ declare global {
 }
 
 export interface NexusGenInputs {
+  ChangePasswordInput: { // input type
+    password: string; // String!
+    token: string; // String!
+  }
   ForgotPasswordInput: { // input type
     email: string; // String!
     username: string; // String!
@@ -162,6 +166,7 @@ export interface NexusGenFieldTypes {
   Mutation: { // field return type
     addIngredientToRecipe: NexusGenRootTypes['Ingredient'] | null; // Ingredient
     addRecipeToUser: NexusGenRootTypes['Recipe'] | null; // Recipe
+    changePassword: NexusGenRootTypes['User']; // User!
     createIngredient: NexusGenRootTypes['Ingredient'] | null; // Ingredient
     createRecipe: NexusGenRootTypes['Recipe'] | null; // Recipe
     deleteRecipe: NexusGenRootTypes['Recipe'] | null; // Recipe
@@ -231,6 +236,7 @@ export interface NexusGenFieldTypeNames {
   Mutation: { // field return type name
     addIngredientToRecipe: 'Ingredient'
     addRecipeToUser: 'Recipe'
+    changePassword: 'User'
     createIngredient: 'Ingredient'
     createRecipe: 'Recipe'
     deleteRecipe: 'Recipe'
@@ -285,6 +291,9 @@ export interface NexusGenArgTypes {
     }
     addRecipeToUser: { // args
       data: NexusGenInputs['RecipeAddInput']; // RecipeAddInput!
+    }
+    changePassword: { // args
+      data: NexusGenInputs['ChangePasswordInput']; // ChangePasswordInput!
     }
     createIngredient: { // args
       data: NexusGenInputs['IngredientCreateInput']; // IngredientCreateInput!

@@ -1,7 +1,10 @@
 import { objectType, extendType } from "nexus";
 import { nonNull, arg } from "nexus";
-import { comparePassword, createJWT, hashPassword } from "../modules/auth";
-import { validateRegister } from "../modules/utils";
+import { comparePassword, createJWT, hashPassword } from "../../modules/auth";
+import { validateRegister } from "../../modules/utils";
+import { v4 } from "uuid";
+import { sendEmail } from "../../modules/sendEmail";
+import Redis from "ioredis";
 
 export const User = objectType({
   name: "User",
@@ -153,8 +156,67 @@ export const User_Mutation = extendType({
             return true;
           }
 
+          const token = v4();
+
+          await context.redis.set(
+            process.env.FORGET_PASSWORD_PREFIX + token,
+            user.id,
+            "ex",
+            1000 * 60 * 60 * 3
+          );
+
+          await sendEmail(
+            args.data.email,
+            `<a href="http://localhost:3000/change-password/${token}">reset password</a>`
+          );
+
           return true;
         },
       });
+
+    t.nonNull.field("changePassword", {
+      type: "User",
+      args: {
+        data: nonNull(
+          arg({
+            type: "ChangePasswordInput",
+          })
+        ),
+      },
+      resolve: async (_parent, args, context) => {
+        const errors = validateRegister(args.data);
+
+        if (errors) {
+          return errors;
+        }
+
+        //const userId = await redis.get(process.env.FORGET_PASSWORD_PREFIX + token)
+        const userID = true;
+
+        if (!userID) {
+          return {
+            errors: [
+              {
+                field: "token",
+                message: "password token expired",
+              },
+            ],
+          };
+        }
+
+        const user = await context.prisma.user.update({
+          where: {
+            id: userID,
+          },
+          data: {
+            password: hashPassword(args.data.password),
+          },
+        });
+
+        //TODO LOG IN USER
+
+        return user;
+      },
+    });
   },
 });

@@ -12,7 +12,7 @@ import {
   Field,
 } from "type-graphql";
 import { Recipe } from "../models/Recipes/Recipe_Model";
-import { User } from "../models/User";
+import { User } from "../models/Users/User";
 import { Context } from "../db";
 
 @InputType()

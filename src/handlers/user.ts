@@ -1,5 +1,6 @@
 import prisma from "../db";
 import { comparePassword, createJWT, hashPassword } from "../modules/auth";
+import { validateRegister } from "../modules/utils";
 
 export const createNewUser = async (req, res, next) => {
   try {
@@ -45,6 +46,44 @@ export const signin = async (req, res) => {
 
   const token = createJWT(user);
   res.json({ token });
+};
+
+export const changePassword = async (req, res) => {
+  try {
+    const errors = validateRegister(req.data);
+
+    if (errors) {
+      return errors;
+    }
+    const userID = 1;
+
+    if (!userID) {
+      return {
+        errors: [
+          {
+            field: "token",
+            message: "password token expired",
+          },
+        ],
+      };
+    }
+    const user = await prisma.user.update({
+      where: {
+        id: userID,
+      },
+      data: {
+        password: await hashPassword(req.data.password),
+      },
+    });
+
+    return user;
+  } catch (error) {
+    res.status(401);
+    res.json({
+      Errors: { field: "username", message: "user doesn't exist" },
+    });
+    return;
+  }
 };
 
 export const getUser = async (username: string) => {

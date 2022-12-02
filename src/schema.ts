@@ -10,7 +10,8 @@ import {
   enumType,
 } from "nexus";
 
-import { User, User_Mutation, User_Query } from "./models/User";
+//import { User, User_Mutation, User_Query } from "./models/Users/User";
+import * as User from "./models/Users";
 import { Users_Recipes } from "./models/Users_Recipes";
 import * as Recipe from "./models/Recipes";
 import * as Ingredient from "./models/Ingredients";
@@ -90,14 +91,6 @@ const Mutation = objectType({
   },
 });
 
-const UserUniqueInput = inputObjectType({
-  name: "UserUniqueInput",
-  definition(t) {
-    t.int("id");
-    t.string("email");
-  },
-});
-
 const FieldError = objectType({
   name: "FieldError",
   definition(t) {
@@ -118,14 +111,6 @@ const AuthPayload = objectType({
     });
   },
 });
-const UserCreateInput = inputObjectType({
-  name: "UserCreateInput",
-  definition(t) {
-    t.nonNull.string("password");
-    t.nonNull.string("username");
-    t.nonNull.string("email");
-  },
-});
 
 const ForgotPasswordInput = inputObjectType({
   name: "ForgotPasswordInput",
@@ -135,22 +120,27 @@ const ForgotPasswordInput = inputObjectType({
   },
 });
 
+const ChangePasswordInput = inputObjectType({
+  name: "ChangePasswordInput",
+  definition(t) {
+    t.nonNull.string("password");
+    t.nonNull.string("token");
+  },
+});
+
 export const schema = makeSchema({
   types: [
-    User_Query,
     Query,
     Mutation,
     Recipe,
     Users_Recipes,
-    User_Mutation,
     User,
     FieldError,
     AuthPayload,
     Recipe_Ing,
     Ingredient,
-    UserUniqueInput,
-    UserCreateInput,
     ForgotPasswordInput,
+    ChangePasswordInput,
     DateTime,
   ],
   outputs: {

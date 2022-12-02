@@ -32,5 +32,3 @@ export async function sendEmail(to: string, html: string) {
   console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
   // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
 }
-
-main().catch(console.error);
