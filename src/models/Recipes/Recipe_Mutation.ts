@@ -1,5 +1,6 @@
 import { objectType, extendType } from "nexus";
 import { nonNull, arg } from "nexus";
+import { isAuth } from "../../middleware/isAuth";
 import { getUserId } from "../../modules/utils";
 
 export const Recipe_Mutation = extendType({
@@ -10,13 +11,13 @@ export const Recipe_Mutation = extendType({
       args: {
         data: nonNull(
           arg({
-            //FIELDS: (recipeName / content / recipeCookTime / recipeServings / skillLvl)
+            //FIELDS: (recipeName / instructions / recipeCookTime / recipeServings / skillLvl)
             type: "RecipeCreateInput",
           })
         ),
       },
-      resolve: (_, args, context) => {
-        return context.prisma.Recipe.create({
+      resolve: async (_, args, context) => {
+        return await context.prisma.Recipe.create({
           data: {
             recipeName: args.data.recipeName,
             recipeCookTime: args.data.recipeCookTime,
@@ -35,9 +36,12 @@ export const Recipe_Mutation = extendType({
           })
         ),
       },
+
+      authorize: (_, args, context) => isAuth(context.userId), // using nexus authorize
       resolve: async (_, args, context) => {
         // Update or Insert User Recipes
         // Only go through if all transactions work
+
         await context.prisma.$transaction(
           [
             context.prisma.Users_Recipes.upsert({

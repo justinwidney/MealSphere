@@ -4,7 +4,7 @@ export const RecipeCreateInput = inputObjectType({
   name: "RecipeCreateInput",
   definition(t) {
     t.nonNull.string("recipeName");
-    t.string("content");
+    t.string("instructions");
     t.nonNull.int("recipeCookTime");
     t.nonNull.int("recipeServings");
     t.int("skillLvl");
