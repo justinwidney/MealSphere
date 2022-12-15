@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Router from "next/router";
 import useSWR from "swr";
 import { request, RequestDocument } from "graphql-request";
@@ -33,7 +33,8 @@ const fetcher = async (
 export function useUser({ redirectTo, redirectIfFound }: userQuery) {
   if (!ISSERVER) {
     const token = localStorage.getItem("token");
-    console.log(token);
+
+    const [mounted, setMounted] = useState(false);
 
     const requestHeaders = {
       authorization: `Bearer ${token}`,
@@ -49,25 +50,44 @@ export function useUser({ redirectTo, redirectIfFound }: userQuery) {
     }`,
         requestHeaders,
       ],
-      fetcher
+      fetcher,
+      {
+        //revalidateIfStale: false,
+        //revalidateOnFocus: false,
+      }
     );
 
-    const user = data?.currentUser?.id;
+    const isLoading = !error && !data;
 
-    console.log(data);
+    const user = data?.currentUser?.id;
 
     const finished = Boolean(data);
     const hasUser = Boolean(user);
 
+    console.log(data, isLoading);
+
     useEffect(() => {
-      if (redirectTo || !finished) return;
-      if (
-        // If redirectTo is set, redirect if the user was not found.
-        (redirectTo && !redirectIfFound && !hasUser) ||
-        // If redirectIfFound is also set, redirect if the user was found
-        (redirectIfFound && hasUser)
-      ) {
-        Router.push(redirectTo);
+      if (!redirectTo || !isLoading) {
+        //setMounted(true);
+        console.log("Checking if User");
+
+        if (
+          // If redirectTo is set, redirect if the user was not found.
+          (redirectTo && !redirectIfFound && !hasUser) ||
+          // If redirectIfFound is also set, redirect if the user was found
+          (redirectIfFound && hasUser)
+        ) {
+          console.log(
+            "my User",
+            user,
+            "finsihes:",
+            finished,
+            "redirect",
+            redirectIfFound
+          );
+
+          Router.replace(redirectTo);
+        }
       }
     }, [redirectTo, redirectIfFound, finished, hasUser]);
 

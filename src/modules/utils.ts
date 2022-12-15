@@ -8,8 +8,6 @@ interface JwtPayload {
 const APP_SECRET = process.env.JWT_SECRET;
 
 function getTokenPayload(token) {
-  console.log(token, "got here");
-
   let SECRET = process.env.JWT_SECRET as string;
 
   return verify(token, SECRET);
@@ -27,7 +25,6 @@ export function getUserId(req, authToken) {
       }
       const { id } = getTokenPayload(token) as JwtPayload;
 
-      console.log(id);
       return id;
     }
   } else if (authToken) {

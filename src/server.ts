@@ -185,6 +185,7 @@ const server = new ApolloServer({
       ...req,
       //redis,
       prisma,
+      isAdmin: req && req.headers.authorization ? getUserId(req, {}) : null,
       userId: req && req.headers.authorization ? getUserId(req, {}) : null,
     };
   },

@@ -86,7 +86,7 @@ input RecipeAddInput {
 }
 
 input RecipeCreateInput {
-  content: String
+  instructions: String
   recipeCookTime: Int!
   recipeName: String!
   recipeServings: Int!

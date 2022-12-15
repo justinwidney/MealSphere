@@ -23,10 +23,20 @@ export type AuthPayload = {
   user?: Maybe<User>;
 };
 
+export type ChangePasswordInput = {
+  password: Scalars['String'];
+  token: Scalars['String'];
+};
+
 export type FieldError = {
   __typename?: 'FieldError';
   field?: Maybe<Scalars['String']>;
   message?: Maybe<Scalars['String']>;
+};
+
+export type ForgotPasswordInput = {
+  email: Scalars['String'];
+  username: Scalars['String'];
 };
 
 export type Ingredient = {
@@ -56,9 +66,11 @@ export type Mutation = {
   __typename?: 'Mutation';
   addIngredientToRecipe?: Maybe<Ingredient>;
   addRecipeToUser?: Maybe<Recipe>;
+  changePassword: User;
   createIngredient?: Maybe<Ingredient>;
   createRecipe?: Maybe<Recipe>;
   deleteRecipe?: Maybe<Recipe>;
+  forgotPassword: User;
   login: AuthPayload;
   signupUser: AuthPayload;
 };
@@ -74,6 +86,11 @@ export type MutationAddRecipeToUserArgs = {
 };
 
 
+export type MutationChangePasswordArgs = {
+  data: ChangePasswordInput;
+};
+
+
 export type MutationCreateIngredientArgs = {
   data: IngredientCreateInput;
 };
@@ -86,6 +103,11 @@ export type MutationCreateRecipeArgs = {
 
 export type MutationDeleteRecipeArgs = {
   id: Scalars['Int'];
+};
+
+
+export type MutationForgotPasswordArgs = {
+  data: ForgotPasswordInput;
 };
 
 
@@ -129,7 +151,7 @@ export type RecipeAddInput = {
 };
 
 export type RecipeCreateInput = {
-  content?: InputMaybe<Scalars['String']>;
+  instructions?: InputMaybe<Scalars['String']>;
   recipeCookTime: Scalars['Int'];
   recipeName: Scalars['String'];
   recipeServings: Scalars['Int'];
@@ -148,6 +170,7 @@ export type Recipe_Ing = {
 export type User = {
   __typename?: 'User';
   createdAt: Scalars['DateTime'];
+  email: Scalars['String'];
   id: Scalars['Int'];
   password: Scalars['String'];
   recipes: Array<Users_Recipes>;
@@ -155,6 +178,7 @@ export type User = {
 };
 
 export type UserCreateInput = {
+  email: Scalars['String'];
   password: Scalars['String'];
   username: Scalars['String'];
 };
@@ -184,13 +208,15 @@ export type Users_RecipesInput = {
   recipesid: Scalars['Int'];
 };
 
-export type SignupMutationVariables = Exact<{
-  username: Scalars['String'];
-  password: Scalars['String'];
+export type CreateRecipeMutationVariables = Exact<{
+  recipeName: Scalars['String'];
+  recipeServings: Scalars['Int'];
+  recipeCookTime: Scalars['Int'];
+  instructions?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type SignupMutation = { __typename?: 'Mutation', signupUser: { __typename?: 'AuthPayload', token?: string | null, user?: { __typename?: 'User', id: number, username?: string | null } | null, Errors?: { __typename?: 'FieldError', field?: string | null, message?: string | null } | null } };
+export type CreateRecipeMutation = { __typename?: 'Mutation', createRecipe?: { __typename?: 'Recipe', id: number } | null };
 
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -203,24 +229,18 @@ export type RecipesQueryVariables = Exact<{ [key: string]: never; }>;
 export type RecipesQuery = { __typename?: 'Query', allRecipes: Array<{ __typename?: 'Recipe', id: number, recipeName: string }> };
 
 
-export const SignupDocument = gql`
-    mutation Signup($username: String!, $password: String!) {
-  signupUser(data: {username: $username, password: $password}) {
-    user {
-      id
-      username
-    }
-    token
-    Errors {
-      field
-      message
-    }
+export const CreateRecipeDocument = gql`
+    mutation createRecipe($recipeName: String!, $recipeServings: Int!, $recipeCookTime: Int!, $instructions: String) {
+  createRecipe(
+    data: {recipeName: $recipeName, recipeCookTime: $recipeCookTime, recipeServings: $recipeServings, instructions: $instructions}
+  ) {
+    id
   }
 }
     `;
 
-export function useSignupMutation() {
-  return Urql.useMutation<SignupMutation, SignupMutationVariables>(SignupDocument);
+export function useCreateRecipeMutation() {
+  return Urql.useMutation<CreateRecipeMutation, CreateRecipeMutationVariables>(CreateRecipeDocument);
 };
 export const CurrentUserDocument = gql`
     query currentUser {

@@ -8,8 +8,6 @@ interface IndexProps {}
 export const Index: React.FC<IndexProps> = ({}) => {
   const [{ data }] = useRecipesQuery();
 
-  console.log(data, "my data");
-
   return (
     <>
       <NavBar />

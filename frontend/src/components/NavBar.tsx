@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 interface NavBarProps {}
 
 export const NavBar: React.FC<NavBarProps> = ({}) => {
-  const user = useUser({ redirectTo: "/", redirectIfFound: true });
+  const user = useUser({ redirectTo: "/", redirectIfFound: false });
   let body = null;
 
   const router = useRouter();
@@ -19,12 +19,14 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
   if (!user) {
     body = (
       <>
-        <NextLink href="/login" legacyBehavior passHref>
-          <Link>Login</Link>
-        </NextLink>
-        <NextLink href="/register" legacyBehavior passHref>
-          <Link>register</Link>
-        </NextLink>
+        <Flex>
+          <NextLink href="/login" legacyBehavior passHref>
+            <Link mr={2}>Login</Link>
+          </NextLink>
+          <NextLink href="/register" legacyBehavior passHref>
+            <Link>register</Link>
+          </NextLink>
+        </Flex>
       </>
     );
   } else {
@@ -40,7 +42,7 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
   }
 
   return (
-    <Flex bg="tan" p={4} ml={"auto"}>
+    <Flex zIndex={2} position="sticky" top={0} bg="tan" p={4} ml={"auto"}>
       <Box ml={"auto"}>{body}</Box>
     </Flex>
   );

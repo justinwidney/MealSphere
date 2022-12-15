@@ -1,0 +1,17 @@
+mutation createRecipe(
+  $recipeName: String!,
+  $recipeServings: Int!,
+  $recipeCookTime: Int!,
+  $instructions: String,
+) {
+  createRecipe(
+    data: {
+      recipeName: $recipeName,
+      recipeCookTime: $recipeCookTime,
+      recipeServings: $recipeServings,
+      instructions: $instructions,
+    }
+  ) {
+    id
+  }
+}

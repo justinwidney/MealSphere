@@ -51,7 +51,7 @@ export interface NexusGenInputs {
     recipeid: number; // Int!
   }
   RecipeCreateInput: { // input type
-    content?: string | null; // String
+    instructions?: string | null; // String
     recipeCookTime: number; // Int!
     recipeName: string; // String!
     recipeServings: number; // Int!

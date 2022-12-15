@@ -8,7 +8,6 @@ import {
   arg,
   asNexusMethod,
   enumType,
-  fieldAuthorizePlugin,
 } from "nexus";
 
 //import { User, User_Mutation, User_Query } from "./models/Users/User";
@@ -160,5 +159,4 @@ export const schema = makeSchema({
       },
     ],
   },
-  plugins: [fieldAuthorizePlugin()],
 });

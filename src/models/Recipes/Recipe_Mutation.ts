@@ -2,6 +2,7 @@ import { objectType, extendType } from "nexus";
 import { nonNull, arg } from "nexus";
 import { isAuth } from "../../middleware/isAuth";
 import { getUserId } from "../../modules/utils";
+import { GraphQLError } from "graphql";
 
 export const Recipe_Mutation = extendType({
   type: "Mutation",
@@ -17,7 +18,7 @@ export const Recipe_Mutation = extendType({
         ),
       },
       resolve: async (_, args, context) => {
-        return await context.prisma.Recipe.create({
+        const recipe = await context.prisma.Recipe.create({
           data: {
             recipeName: args.data.recipeName,
             recipeCookTime: args.data.recipeCookTime,
@@ -25,8 +26,11 @@ export const Recipe_Mutation = extendType({
             skillLvl: args.data.skillLvl,
           },
         });
+
+        return recipe;
       },
     });
+
     t.field("addRecipeToUser", {
       type: "Recipe",
       args: {
@@ -37,7 +41,6 @@ export const Recipe_Mutation = extendType({
         ),
       },
 
-      authorize: (_, args, context) => isAuth(context.userId), // using nexus authorize
       resolve: async (_, args, context) => {
         // Update or Insert User Recipes
         // Only go through if all transactions work
