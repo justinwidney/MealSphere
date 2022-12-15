@@ -18,6 +18,13 @@ export const RecipeAddInput = inputObjectType({
   },
 });
 
+export const RecipeLimit = inputObjectType({
+  name: "RecipeLimit",
+  definition(t) {
+    t.nonNull.int("limit"), t.string("cursor");
+  },
+});
+
 export const Users_RecipesInput = inputObjectType({
   name: "Users_RecipesInput",
   definition(t) {

@@ -1,5 +1,12 @@
-import { objectType, extendType } from "nexus";
-import { userInfo } from "os";
+import { objectType, extendType, intArg, nonNull, arg } from "nexus";
+import { resolve } from "path";
+import { Recipe } from "./Recipe_Model";
+
+interface Recipe_Query_Paramters {
+  skip?: number;
+  take: number;
+  cursor?: { id: number };
+}
 
 export const Recipe_Query = extendType({
   type: "Query",
@@ -17,6 +24,67 @@ export const Recipe_Query = extendType({
           where: {
             userid: user.id,
           },
+        });
+      },
+    }),
+      t.nonNull.list.nonNull.field("allRecipes", {
+        type: "Recipe",
+        args: {
+          data: nonNull(
+            arg({
+              type: "RecipeLimit",
+            })
+          ),
+        },
+
+        resolve: async (_parent, _args, context) => {
+          const realLimit = Math.min(50, _args.data.limit);
+
+          const cursor = parseInt(_args.data.cursor);
+
+          let firstQueryResults: any;
+
+          var query: Recipe_Query_Paramters;
+
+          query = {
+            take: realLimit,
+          };
+
+          if (cursor) {
+            query.skip = 1;
+            // TODO Change to Created At
+            query.cursor = {
+              id: parseInt(_args.data.cursor),
+            };
+          }
+
+          firstQueryResults = await context.prisma.Recipe.findMany(query);
+
+          const lastRecipeInResults = firstQueryResults[_args.data.limit - 1];
+
+          try {
+            const myCursor = lastRecipeInResults.id;
+          } catch (e) {
+            const myCursor = _args.data.cursor;
+          }
+
+          return firstQueryResults;
+        },
+      });
+    t.nonNull.list.nonNull.field("allUser_Recipes", {
+      type: "Users_Recipes",
+      resolve: (_parent, _args, context) => {
+        return context.prisma.Users_Recipes.findMany();
+      },
+    });
+    t.nullable.field("recipeById", {
+      type: "Recipe",
+      args: {
+        id: intArg(),
+      },
+      resolve: (_parent, args, context) => {
+        return context.prisma.Recipe.findUnique({
+          where: { id: args.id || undefined },
         });
       },
     });

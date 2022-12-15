@@ -12,13 +12,13 @@ import {
 } from "../../data/validation/user";
 import { toErrorMap } from "../../utils/toErrorMap";
 
-export const ChangePassword: NextPage<{ token: string }> = ({ token }) => {
+export const ChangePassword: NextPage<{}> = ({}) => {
   const router = useRouter();
   const [tokenError, setTokenError] = useState("");
 
   const validateChange = async (values: any) => {
     try {
-      const Errors = await validateNewPassword(values);
+      const Errors = await validateNewPassword(values.password);
 
       if (Object.keys(Errors).length) {
         console.log(Errors);
@@ -63,7 +63,11 @@ export const ChangePassword: NextPage<{ token: string }> = ({ token }) => {
       <Formik
         initialValues={{ password: "" }}
         onSubmit={async (values, { setErrors }) => {
-          const response = await validateChange(values);
+          const response = await validateChange({
+            newPassword: values.password,
+            token:
+              typeof router.query.token === "string" ? router.query.token : "",
+          });
           if (response?.Errors) {
             const errorMap = toErrorMap(response.Errors);
             if ("token" in errorMap) {
@@ -101,12 +105,6 @@ export const ChangePassword: NextPage<{ token: string }> = ({ token }) => {
       </Formik>
     </Wrapper>
   );
-};
-
-ChangePassword.getInitialProps = ({ query }) => {
-  return {
-    token: query.token as string,
-  };
 };
 
 export default ChangePassword;

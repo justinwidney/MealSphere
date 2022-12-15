@@ -19,39 +19,9 @@ import * as Ingredient from "./models/Ingredients";
 import { DateTimeResolver } from "graphql-scalars";
 import { Recipe_Ing } from "./models/Recipe_Ing";
 import { type } from "os";
+import { String } from "./models/Recipes/Recipe_Model";
 
 export const DateTime = asNexusMethod(DateTimeResolver, "date");
-
-const Query = objectType({
-  name: "Query",
-  definition(t) {
-    t.nonNull.list.nonNull.field("allRecipes", {
-      type: "Recipe",
-      resolve: (_parent, _args, context) => {
-        return context.prisma.Recipe.findMany();
-      },
-    });
-
-    t.nonNull.list.nonNull.field("allUser_Recipes", {
-      type: "Users_Recipes",
-      resolve: (_parent, _args, context) => {
-        return context.prisma.Users_Recipes.findMany();
-      },
-    });
-
-    t.nullable.field("recipeById", {
-      type: "Recipe",
-      args: {
-        id: intArg(),
-      },
-      resolve: (_parent, args, context) => {
-        return context.prisma.Recipe.findUnique({
-          where: { id: args.id || undefined },
-        });
-      },
-    });
-  },
-});
 
 const Mutation = objectType({
   name: "Mutation",
@@ -130,9 +100,9 @@ const ChangePasswordInput = inputObjectType({
 
 export const schema = makeSchema({
   types: [
-    Query,
     Mutation,
     Recipe,
+    String,
     Users_Recipes,
     User,
     FieldError,

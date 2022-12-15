@@ -132,6 +132,11 @@ export type Query = {
 };
 
 
+export type QueryAllRecipesArgs = {
+  data: RecipeLimit;
+};
+
+
 export type QueryRecipeByIdArgs = {
   id?: InputMaybe<Scalars['Int']>;
 };
@@ -140,6 +145,8 @@ export type Recipe = {
   __typename?: 'Recipe';
   id: Scalars['Int'];
   ingredients?: Maybe<Array<Maybe<Recipe_Ing>>>;
+  instructions?: Maybe<Scalars['String']>;
+  instructionssnippet?: Maybe<Scalars['String']>;
   recipeCookTime: Scalars['Int'];
   recipeHolder?: Maybe<Array<Maybe<Users_Recipes>>>;
   recipeName: Scalars['String'];
@@ -156,6 +163,11 @@ export type RecipeCreateInput = {
   recipeName: Scalars['String'];
   recipeServings: Scalars['Int'];
   skillLvl?: InputMaybe<Scalars['Int']>;
+};
+
+export type RecipeLimit = {
+  cursor?: InputMaybe<Scalars['String']>;
+  limit: Scalars['Int'];
 };
 
 export type Recipe_Ing = {
@@ -218,15 +230,27 @@ export type CreateRecipeMutationVariables = Exact<{
 
 export type CreateRecipeMutation = { __typename?: 'Mutation', createRecipe?: { __typename?: 'Recipe', id: number } | null };
 
+export type SignupMutationVariables = Exact<{
+  username: Scalars['String'];
+  password: Scalars['String'];
+  email: Scalars['String'];
+}>;
+
+
+export type SignupMutation = { __typename?: 'Mutation', signupUser: { __typename?: 'AuthPayload', token?: string | null, user?: { __typename?: 'User', id: number, username?: string | null } | null, Errors?: { __typename?: 'FieldError', field?: string | null, message?: string | null } | null } };
+
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type CurrentUserQuery = { __typename?: 'Query', currentUser?: { __typename?: 'User', id: number, username?: string | null } | null };
 
-export type RecipesQueryVariables = Exact<{ [key: string]: never; }>;
+export type RecipesQueryVariables = Exact<{
+  limit: Scalars['Int'];
+  cursor?: InputMaybe<Scalars['String']>;
+}>;
 
 
-export type RecipesQuery = { __typename?: 'Query', allRecipes: Array<{ __typename?: 'Recipe', id: number, recipeName: string }> };
+export type RecipesQuery = { __typename?: 'Query', allRecipes: Array<{ __typename?: 'Recipe', id: number, recipeName: string, instructionssnippet?: string | null }> };
 
 
 export const CreateRecipeDocument = gql`
@@ -242,6 +266,25 @@ export const CreateRecipeDocument = gql`
 export function useCreateRecipeMutation() {
   return Urql.useMutation<CreateRecipeMutation, CreateRecipeMutationVariables>(CreateRecipeDocument);
 };
+export const SignupDocument = gql`
+    mutation Signup($username: String!, $password: String!, $email: String!) {
+  signupUser(data: {username: $username, password: $password, email: $email}) {
+    user {
+      id
+      username
+    }
+    token
+    Errors {
+      field
+      message
+    }
+  }
+}
+    `;
+
+export function useSignupMutation() {
+  return Urql.useMutation<SignupMutation, SignupMutationVariables>(SignupDocument);
+};
 export const CurrentUserDocument = gql`
     query currentUser {
   currentUser {
@@ -255,14 +298,15 @@ export function useCurrentUserQuery(options?: Omit<Urql.UseQueryArgs<CurrentUser
   return Urql.useQuery<CurrentUserQuery, CurrentUserQueryVariables>({ query: CurrentUserDocument, ...options });
 };
 export const RecipesDocument = gql`
-    query Recipes {
-  allRecipes {
+    query Recipes($limit: Int!, $cursor: String) {
+  allRecipes(data: {limit: $limit, cursor: $cursor}) {
     id
     recipeName
+    instructionssnippet
   }
 }
     `;
 
-export function useRecipesQuery(options?: Omit<Urql.UseQueryArgs<RecipesQueryVariables>, 'query'>) {
+export function useRecipesQuery(options: Omit<Urql.UseQueryArgs<RecipesQueryVariables>, 'query'>) {
   return Urql.useQuery<RecipesQuery, RecipesQueryVariables>({ query: RecipesDocument, ...options });
 };

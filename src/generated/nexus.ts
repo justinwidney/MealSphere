@@ -57,6 +57,10 @@ export interface NexusGenInputs {
     recipeServings: number; // Int!
     skillLvl?: number | null; // Int
   }
+  RecipeLimit: { // input type
+    cursor?: string | null; // String
+    limit: number; // Int!
+  }
   UserCreateInput: { // input type
     email: string; // String!
     password: string; // String!
@@ -112,6 +116,7 @@ export interface NexusGenObjects {
   Query: {};
   Recipe: { // root type
     id: number; // Int!
+    instructions?: string | null; // String
     recipeCookTime: number; // Int!
     recipeName: string; // String!
     recipeServings: number; // Int!
@@ -186,6 +191,8 @@ export interface NexusGenFieldTypes {
   Recipe: { // field return type
     id: number; // Int!
     ingredients: Array<NexusGenRootTypes['Recipe_Ing'] | null> | null; // [Recipe_Ing]
+    instructions: string | null; // String
+    instructionssnippet: string | null; // String
     recipeCookTime: number; // Int!
     recipeHolder: Array<NexusGenRootTypes['Users_Recipes'] | null> | null; // [Users_Recipes]
     recipeName: string; // String!
@@ -256,6 +263,8 @@ export interface NexusGenFieldTypeNames {
   Recipe: { // field return type name
     id: 'Int'
     ingredients: 'Recipe_Ing'
+    instructions: 'String'
+    instructionssnippet: 'String'
     recipeCookTime: 'Int'
     recipeHolder: 'Users_Recipes'
     recipeName: 'String'
@@ -315,6 +324,9 @@ export interface NexusGenArgTypes {
     }
   }
   Query: {
+    allRecipes: { // args
+      data: NexusGenInputs['RecipeLimit']; // RecipeLimit!
+    }
     recipeById: { // args
       id?: number | null; // Int
     }

@@ -63,7 +63,7 @@ type Mutation {
 }
 
 type Query {
-  allRecipes: [Recipe!]!
+  allRecipes(data: RecipeLimit!): [Recipe!]!
   allUser_Recipes: [Users_Recipes!]!
   allUsers: [User!]!
   currentUser: User
@@ -75,6 +75,8 @@ type Query {
 type Recipe {
   id: Int!
   ingredients: [Recipe_Ing]
+  instructions: String
+  instructionssnippet: String
   recipeCookTime: Int!
   recipeHolder: [Users_Recipes]
   recipeName: String!
@@ -91,6 +93,11 @@ input RecipeCreateInput {
   recipeName: String!
   recipeServings: Int!
   skillLvl: Int
+}
+
+input RecipeLimit {
+  cursor: String
+  limit: Int!
 }
 
 type Recipe_Ing {

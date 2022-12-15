@@ -1,8 +1,48 @@
 import { dedupExchange, fetchExchange, makeOperation } from "urql";
 import { authExchange } from "@urql/exchange-auth";
-import { cacheExchange } from "@urql/exchange-graphcache";
+import { cacheExchange, Resolver } from "@urql/exchange-graphcache";
 
 const ISSERVER = typeof window === "undefined";
+
+import { stringifyVariables } from "@urql/core";
+
+export type MergeMode = "before" | "after";
+
+export interface PaginationParams {
+  cursorArgument?: string;
+  limitArgument?: string;
+  mergeMode?: MergeMode;
+}
+
+export const CursorPagination = (): Resolver => {
+  return (_parent, fieldArgs, cache, info) => {
+    const { parentKey: entityKey, fieldName } = info;
+
+    console.log(entityKey, fieldName, ">");
+
+    const allFields = cache.inspectFields(entityKey);
+    console.log(allFields, ">");
+    const fieldInfos = allFields.filter((info) => info.fieldName === fieldName);
+    const size = fieldInfos.length;
+    if (size === 0) {
+      return undefined;
+    }
+
+    const fieldKey = `${fieldName}(${stringifyVariables(fieldArgs)})`;
+    const isItinCache = cache.resolve(entityKey, fieldKey);
+
+    info.partial = !isItinCache;
+    const results: string[] = [];
+
+    fieldInfos.forEach((fi) => {
+      const Recipes = cache.resolve(entityKey, fi.fieldKey) as string[];
+      console.log(Recipes);
+      results.push(...Recipes);
+    });
+
+    return results;
+  };
+};
 
 export const createUrqlClient = (ssrExchange: any) => ({
   url: "http://localhost:4000/graphql",
@@ -11,7 +51,13 @@ export const createUrqlClient = (ssrExchange: any) => ({
   },
   exchanges: [
     dedupExchange,
-    cacheExchange({}),
+    cacheExchange({
+      resolvers: {
+        Query: {
+          allRecipes: CursorPagination(),
+        },
+      },
+    }),
     authExchange({
       addAuthToOperation: ({ authState, operation }) => {
         // the token isn't in the auth state, return the operation without changes
