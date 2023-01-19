@@ -1,4 +1,17 @@
-import { Box, Flex, Link, Button } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Link,
+  Button,
+  Text,
+  Input,
+  InputGroup,
+  InputLeftAddon,
+  Stack,
+  HStack,
+  InputRightAddon,
+  InputRightElement,
+} from "@chakra-ui/react";
 import React, { useState } from "react";
 import NextLink from "next/link";
 import { useUser } from "../data/hooks/hooks";
@@ -42,7 +55,31 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
   }
 
   return (
-    <Flex zIndex={2} position="sticky" top={0} bg="tan" p={4} ml={"auto"}>
+    <Flex zIndex={2} position="sticky" top={0} bg="white" p={4} ml={"auto"}>
+      <HStack>
+        <Box ml={"left"}>
+          <Text> MealSphere</Text>
+        </Box>
+
+        <Stack spacing={4}>
+          <InputGroup w={"1000px"}>
+            <InputLeftAddon borderRadius="10" children="ALL" />
+            <Input
+              borderRadius="10"
+              placeholder="Search for Product, Categories."
+            />
+            <InputRightElement children={"test"} />
+          </InputGroup>
+        </Stack>
+
+        <Button colorScheme="pink" variant="solid">
+          PasteList
+        </Button>
+        <Button colorScheme="teal" variant="outline">
+          {"Cart"}
+        </Button>
+      </HStack>
+
       <Box ml={"auto"}>{body}</Box>
     </Flex>
   );
