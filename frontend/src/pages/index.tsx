@@ -1,16 +1,38 @@
 import { NavBar } from "../components/NavBar";
-
+import { A11y, Navigation, Pagination } from "swiper";
 import { withUrqlClient } from "next-urql";
 import { createUrqlClient } from "../utils/UrqlClient";
 import { useRecipesQuery } from "../generated/graphql";
-import { Box, Button, Flex, Heading, Stack, Text } from "@chakra-ui/react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import {
+  Box,
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Divider,
+  Flex,
+  Heading,
+  HStack,
+  SimpleGrid,
+  Spacer,
+  Stack,
+  Text,
+  VStack,
+  Grid,
+  GridItem,
+} from "@chakra-ui/react";
 import { Layout } from "../components/Layout";
 import { useState } from "react";
+import { CategoryCard } from "../components/CategoryCard";
+import { ItemCard } from "../components/Items/ItemCard";
 interface IndexProps {}
+
+import "swiper/css";
 
 export const Index: React.FC<IndexProps> = ({}) => {
   const [variables, setVariables] = useState({
-    limit: 10,
+    limit: 4,
     cursor: null as null | string,
   });
 
@@ -18,21 +40,78 @@ export const Index: React.FC<IndexProps> = ({}) => {
 
   return (
     <Layout>
-      <Flex>
-        <Heading>Recipes</Heading>
+      <Flex alignItems="end" mb={4}>
+        <Heading>Top Categories</Heading>
+        <Text ml={4} color="green">
+          View All
+        </Text>
       </Flex>
+      <Divider mb={4} w="15%" />
+      <Grid templateColumns="repeat(4, 1fr)" gap={5} marginBottom={5}>
+        <GridItem>
+          <CategoryCard
+            HeadingName="BreakFast"
+            backgroundColor="#F5DE64"
+          ></CategoryCard>
+        </GridItem>
+        <GridItem>
+          <CategoryCard
+            HeadingName="Lunch"
+            backgroundColor="#D5F9A9"
+          ></CategoryCard>
+        </GridItem>
+        <GridItem>
+          <CategoryCard
+            backgroundColor="#A9F9EA"
+            HeadingName="Dinner"
+          ></CategoryCard>
+        </GridItem>
+        <GridItem>
+          <CategoryCard
+            backgroundColor="#E6D2FF"
+            HeadingName="Dessert"
+          ></CategoryCard>
+        </GridItem>
+      </Grid>
+
+      <Flex alignItems="end" mb={4} mt={4}>
+        <Heading>Top Items</Heading>
+        <Text ml={4} color="green">
+          View All
+        </Text>
+      </Flex>
+
+      <Divider mb={4} w="15%" />
+
       <br />
       {fetching ? (
         <div> loading... </div>
       ) : (
-        <Stack spacing={8} mb={4}>
-          {data?.allRecipes?.Recipes?.map((p) => (
-            <Box key={p!.id} p={5} shadow="md" borderWidth="1px">
-              <Heading fontSize="xl">{p!.recipeName}</Heading>
-              <Text mt={4}>{p!.instructionssnippet}</Text>
-            </Box>
+        <Swiper
+          spaceBetween={15}
+          slidesPerView={4}
+          slidesPerGroup={4}
+          pagination={{
+            clickable: true,
+          }}
+          modules={[Pagination, Navigation, A11y]}
+        >
+          {data?.allRecipes.map((p) => (
+            <>
+              <SwiperSlide>
+                <div>
+                  <ItemCard
+                    HeadingName={p.recipeName}
+                    storeName={p.recipeName}
+                    storePrice={"9"}
+                    storeDescription={""}
+                    storeVolume={""}
+                  ></ItemCard>{" "}
+                </div>
+              </SwiperSlide>
+            </>
           ))}
-        </Stack>
+        </Swiper>
       )}
       {data && data.allRecipes.hasMore ? (
         <Flex>
