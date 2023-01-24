@@ -54,6 +54,7 @@
     "passport-local": "^1.0.0",
     "postgraphile": "^4.12.11",
     "prettier": "^2.7.1",
+    "swiper": "^8.4.6",
     "ts-jest": "^29.0.3",
     "type-graphql": "^1.1.1",
     "uuid": "^9.0.0"

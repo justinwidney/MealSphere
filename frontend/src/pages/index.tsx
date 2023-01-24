@@ -21,6 +21,7 @@ import {
   VStack,
   Grid,
   GridItem,
+  Container,
 } from "@chakra-ui/react";
 import { Layout } from "../components/Layout";
 import { useState } from "react";
@@ -37,6 +38,8 @@ export const Index: React.FC<IndexProps> = ({}) => {
   });
 
   const [{ data, fetching }] = useRecipesQuery({ variables });
+
+  console.log(data, "MY DATA");
 
   return (
     <Layout>
@@ -69,70 +72,75 @@ export const Index: React.FC<IndexProps> = ({}) => {
         <GridItem>
           <CategoryCard
             backgroundColor="#E6D2FF"
+            url="https://bit.ly/dan-abramov"
             HeadingName="Dessert"
           ></CategoryCard>
         </GridItem>
       </Grid>
 
-      <Flex alignItems="end" mb={4} mt={4}>
-        <Heading>Top Items</Heading>
-        <Text ml={4} color="green">
-          View All
-        </Text>
-      </Flex>
+      <Container maxW={"container.xl"}>
+        <HStack alignItems="end" mb={4} mt={4} spacing="24px">
+          <Heading>Top Items</Heading>
 
-      <Divider mb={4} w="15%" />
+          {data && data.allRecipes.hasMore ? (
+            <Button
+              variant={"link"}
+              colorScheme="teal"
+              onClick={() => {
+                setVariables({
+                  limit: variables.limit,
+                  cursor:
+                    data!.allRecipes!.Recipes![
+                      data!.allRecipes!.Recipes!.length - 1
+                    ]!.id.toString(),
+                });
+              }}
+              isLoading={fetching}
+              m="auto"
+              my={8}
+            >
+              View More
+            </Button>
+          ) : null}
+        </HStack>
 
-      <br />
-      {fetching ? (
-        <div> loading... </div>
-      ) : (
-        <Swiper
-          spaceBetween={15}
-          slidesPerView={4}
-          slidesPerGroup={4}
-          pagination={{
-            clickable: true,
-          }}
-          modules={[Pagination, Navigation, A11y]}
-        >
-          {data?.allRecipes.map((p) => (
-            <>
-              <SwiperSlide>
-                <div>
-                  <ItemCard
-                    HeadingName={p.recipeName}
-                    storeName={p.recipeName}
-                    storePrice={"9"}
-                    storeDescription={""}
-                    storeVolume={""}
-                  ></ItemCard>{" "}
-                </div>
-              </SwiperSlide>
-            </>
-          ))}
-        </Swiper>
-      )}
-      {data && data.allRecipes.hasMore ? (
-        <Flex>
-          <Button
-            onClick={() => {
-              setVariables({
-                limit: variables.limit,
-                cursor:
-                  data!.allRecipes!.Recipes![
-                    data!.allRecipes!.Recipes!.length - 1
-                  ]!.id.toString(),
-              });
+        <Divider mb={4} w="15%" />
+
+        <br />
+        {fetching ? (
+          <div> loading... </div>
+        ) : (
+          <Swiper
+            spaceBetween={15}
+            slidesPerView={4}
+            slidesPerGroup={4}
+            pagination={{
+              clickable: true,
             }}
-            isLoading={fetching}
-            m="auto"
-            my={8}
+            navigation={{
+              prevEl: ".swiper-button-prev",
+              nextEl: ".swiper-button-next",
+            }}
+            modules={[Pagination, Navigation, A11y]}
           >
-            Load More
-          </Button>
-        </Flex>
-      ) : null}
+            {data?.allRecipes?.Recipes.map((p) => (
+              <>
+                <SwiperSlide>
+                  <div>
+                    <ItemCard
+                      HeadingName={p.recipeName}
+                      storeName={p.recipeName}
+                      storePrice={"9"}
+                      storeDescription={""}
+                      storeVolume={""}
+                    ></ItemCard>{" "}
+                  </div>
+                </SwiperSlide>
+              </>
+            ))}
+          </Swiper>
+        )}
+      </Container>
     </Layout>
   );
 };

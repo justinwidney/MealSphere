@@ -55,7 +55,7 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
   }
 
   return (
-    <Flex zIndex={2} position="sticky" top={0} bg="white" p={4} ml={"auto"}>
+    <Flex zIndex={2} top={0} bg="white" p={4} ml={"auto"}>
       <HStack>
         <Box ml={"left"}>
           <Text> MealSphere</Text>

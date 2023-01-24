@@ -1,4 +1,5 @@
 import React from "react";
+import { CategoryBar } from "./CategoryBar";
 import { NavBar } from "./NavBar";
 import { TopBar } from "./TopBar";
 import { Wrapper, WrapperVariant } from "./Wrapper";
@@ -13,6 +14,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, variant }) => {
     <>
       <TopBar />
       <NavBar />
+      <CategoryBar />
       <Wrapper variant={variant}>{children}</Wrapper>
     </>
   );

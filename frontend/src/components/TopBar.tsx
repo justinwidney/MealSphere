@@ -23,7 +23,6 @@ export const TopBar: React.FC<TopBarProps> = ({}) => {
   return (
     <Flex
       zIndex={2}
-      position="sticky"
       top={0}
       bg="#F3F3F3"
       p={4}

@@ -8,7 +8,12 @@ import {
   Button,
   Box,
   Text,
+  Image,
+  HStack,
 } from "@chakra-ui/react";
+
+import { ShoppingCartOutlined, HeartOutlined } from "@ant-design/icons";
+
 import React from "react";
 
 interface ItemCardProps {
@@ -28,44 +33,56 @@ export const ItemCard: React.FC<ItemCardProps> = ({
   ...props
 }) => {
   return (
-    <Card w="100%" mb={20} {...props} mr={0} ml={0}>
+    <Card
+      w="100%"
+      mb={20}
+      {...props}
+      mr={0}
+      ml={0}
+      variant="outline"
+      borderRadius={3}
+    >
       <CardBody>
         <Heading mb={4} size="sm">
           {HeadingName}
         </Heading>
 
-        <Box w="50%">
-          <Stack spacing="0" mb={4}>
+        <HStack>
+          <Box w="50%">
+            <Stack spacing="0" mb={4}>
+              <Flex>
+                <Text fontSize="xs">{storeName}</Text>
+                <Text fontSize="xs" ml="auto">
+                  {storePrice}
+                </Text>
+              </Flex>
+              <Flex>
+                <Text fontSize="xs">{storeName}</Text>
+                <Text fontSize="xs" ml="auto">
+                  {storePrice}
+                </Text>
+              </Flex>
+            </Stack>
             <Flex>
-              <Text fontSize="xs">{storeName}</Text>
-              <Text fontSize="xs" ml="auto">
-                {storePrice}
-              </Text>
+              <Text>Best Option</Text>
             </Flex>
-            <Flex>
-              <Text fontSize="xs">{storeName}</Text>
-              <Text fontSize="xs" ml="auto">
-                {storePrice}
-              </Text>
-            </Flex>
-          </Stack>
-          <Flex>
-            <Text>Best Option</Text>
-          </Flex>
-          <Text color="blue.600" fontSize="2xl">
-            $450
-          </Text>
+            <Text color="blue.600" fontSize="2xl">
+              $450
+            </Text>
 
-          <Flex alignItems="end" mb={-10} mt={4}>
-            <Button borderRadius={0} background="white" variant="outline">
-              {" "}
-              Tes{" "}
-            </Button>
-            <Button borderRadius={0} colorScheme="green" variant="solid">
-              Fav
-            </Button>
-          </Flex>
-        </Box>
+            <Flex alignItems="end" mb={-10} mt={4}>
+              <Button borderRadius={0} background="white" variant="outline">
+                <HeartOutlined />
+              </Button>
+              <Button borderRadius={0} colorScheme="teal" variant="solid">
+                <ShoppingCartOutlined />
+              </Button>
+            </Flex>
+          </Box>
+          <Box w="50%">
+            <Image src="https://bit.ly/dan-abramov"></Image>
+          </Box>
+        </HStack>
       </CardBody>
     </Card>
   );
