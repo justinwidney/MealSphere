@@ -19,7 +19,6 @@ import * as Ingredient from "./models/Ingredients";
 import { DateTimeResolver } from "graphql-scalars";
 import { Recipe_Ing } from "./models/Recipe_Ing";
 import { type } from "os";
-import { String } from "./models/Recipes/Recipe_Model";
 
 export const DateTime = asNexusMethod(DateTimeResolver, "date");
 
@@ -102,7 +101,6 @@ export const schema = makeSchema({
   types: [
     Mutation,
     Recipe,
-    String,
     Users_Recipes,
     User,
     FieldError,
@@ -128,5 +126,10 @@ export const schema = makeSchema({
         alias: "prisma",
       },
     ],
+  },
+  features: {
+    abstractTypeStrategies: {
+      resolveType: false,
+    },
   },
 });

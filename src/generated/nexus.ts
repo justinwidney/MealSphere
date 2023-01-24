@@ -113,6 +113,10 @@ export interface NexusGenObjects {
     id: number; // Int!
   }
   Mutation: {};
+  Pagination_Recipe: { // root type
+    Recipes?: Array<NexusGenRootTypes['Recipe'] | null> | null; // [Recipe]
+    hasMore: boolean; // Boolean!
+  }
   Query: {};
   Recipe: { // root type
     id: number; // Int!
@@ -140,12 +144,13 @@ export interface NexusGenObjects {
 }
 
 export interface NexusGenInterfaces {
+  Recipe_Fragment: NexusGenRootTypes['Recipe'];
 }
 
 export interface NexusGenUnions {
 }
 
-export type NexusGenRootTypes = NexusGenObjects
+export type NexusGenRootTypes = NexusGenInterfaces & NexusGenObjects
 
 export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
 
@@ -179,8 +184,12 @@ export interface NexusGenFieldTypes {
     login: NexusGenRootTypes['AuthPayload']; // AuthPayload!
     signupUser: NexusGenRootTypes['AuthPayload']; // AuthPayload!
   }
+  Pagination_Recipe: { // field return type
+    Recipes: Array<NexusGenRootTypes['Recipe'] | null> | null; // [Recipe]
+    hasMore: boolean; // Boolean!
+  }
   Query: { // field return type
-    allRecipes: NexusGenRootTypes['Recipe'][]; // [Recipe!]!
+    allRecipes: NexusGenRootTypes['Pagination_Recipe']; // Pagination_Recipe!
     allUser_Recipes: NexusGenRootTypes['Users_Recipes'][]; // [Users_Recipes!]!
     allUsers: NexusGenRootTypes['User'][]; // [User!]!
     currentUser: NexusGenRootTypes['User'] | null; // User
@@ -219,6 +228,16 @@ export interface NexusGenFieldTypes {
     recipes: NexusGenRootTypes['Recipe'] | null; // Recipe
     user: NexusGenRootTypes['User'] | null; // User
   }
+  Recipe_Fragment: { // field return type
+    id: number; // Int!
+    ingredients: Array<NexusGenRootTypes['Recipe_Ing'] | null> | null; // [Recipe_Ing]
+    instructions: string | null; // String
+    instructionssnippet: string | null; // String
+    recipeCookTime: number; // Int!
+    recipeHolder: Array<NexusGenRootTypes['Users_Recipes'] | null> | null; // [Users_Recipes]
+    recipeName: string; // String!
+    recipeServings: number; // Int!
+  }
 }
 
 export interface NexusGenFieldTypeNames {
@@ -251,8 +270,12 @@ export interface NexusGenFieldTypeNames {
     login: 'AuthPayload'
     signupUser: 'AuthPayload'
   }
+  Pagination_Recipe: { // field return type name
+    Recipes: 'Recipe'
+    hasMore: 'Boolean'
+  }
   Query: { // field return type name
-    allRecipes: 'Recipe'
+    allRecipes: 'Pagination_Recipe'
     allUser_Recipes: 'Users_Recipes'
     allUsers: 'User'
     currentUser: 'User'
@@ -290,6 +313,16 @@ export interface NexusGenFieldTypeNames {
     id: 'Int'
     recipes: 'Recipe'
     user: 'User'
+  }
+  Recipe_Fragment: { // field return type name
+    id: 'Int'
+    ingredients: 'Recipe_Ing'
+    instructions: 'String'
+    instructionssnippet: 'String'
+    recipeCookTime: 'Int'
+    recipeHolder: 'Users_Recipes'
+    recipeName: 'String'
+    recipeServings: 'Int'
   }
 }
 
@@ -334,9 +367,11 @@ export interface NexusGenArgTypes {
 }
 
 export interface NexusGenAbstractTypeMembers {
+  Recipe_Fragment: "Recipe"
 }
 
 export interface NexusGenTypeInterfaces {
+  Recipe: "Recipe_Fragment"
 }
 
 export type NexusGenObjectNames = keyof NexusGenObjects;
@@ -345,7 +380,7 @@ export type NexusGenInputNames = keyof NexusGenInputs;
 
 export type NexusGenEnumNames = never;
 
-export type NexusGenInterfaceNames = never;
+export type NexusGenInterfaceNames = keyof NexusGenInterfaces;
 
 export type NexusGenScalarNames = keyof NexusGenScalars;
 
@@ -357,9 +392,9 @@ export type NexusGenAbstractsUsingStrategyResolveType = never;
 
 export type NexusGenFeaturesConfig = {
   abstractTypeStrategies: {
-    isTypeOf: false
-    resolveType: true
+    resolveType: false
     __typename: false
+    isTypeOf: false
   }
 }
 

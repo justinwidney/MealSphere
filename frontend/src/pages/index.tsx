@@ -22,26 +22,28 @@ export const Index: React.FC<IndexProps> = ({}) => {
         <Heading>Recipes</Heading>
       </Flex>
       <br />
-      {fetching && !data ? (
+      {fetching ? (
         <div> loading... </div>
       ) : (
-        <Stack spacing={8}>
-          {data?.allRecipes.map((p) => (
-            <Box key={p.id} p={5} shadow="md" borderWidth="1px">
-              <Heading fontSize="xl">{p.recipeName}</Heading>
-              <Text mt={4}>{p.instructionssnippet}</Text>
+        <Stack spacing={8} mb={4}>
+          {data?.allRecipes?.Recipes?.map((p) => (
+            <Box key={p!.id} p={5} shadow="md" borderWidth="1px">
+              <Heading fontSize="xl">{p!.recipeName}</Heading>
+              <Text mt={4}>{p!.instructionssnippet}</Text>
             </Box>
           ))}
         </Stack>
       )}
-      {data ? (
+      {data && data.allRecipes.hasMore ? (
         <Flex>
           <Button
             onClick={() => {
               setVariables({
                 limit: variables.limit,
                 cursor:
-                  data.allRecipes[data.allRecipes.length - 1].id.toString(),
+                  data!.allRecipes!.Recipes![
+                    data!.allRecipes!.Recipes!.length - 1
+                  ]!.id.toString(),
               });
             }}
             isLoading={fetching}

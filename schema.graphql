@@ -62,8 +62,13 @@ type Mutation {
   signupUser(data: UserCreateInput!): AuthPayload!
 }
 
+type Pagination_Recipe {
+  Recipes: [Recipe]
+  hasMore: Boolean!
+}
+
 type Query {
-  allRecipes(data: RecipeLimit!): [Recipe!]!
+  allRecipes(data: RecipeLimit!): Pagination_Recipe!
   allUser_Recipes: [Users_Recipes!]!
   allUsers: [User!]!
   currentUser: User
@@ -72,7 +77,7 @@ type Query {
   recipeById(id: Int): Recipe
 }
 
-type Recipe {
+type Recipe implements Recipe_Fragment {
   id: Int!
   ingredients: [Recipe_Ing]
   instructions: String
@@ -98,6 +103,17 @@ input RecipeCreateInput {
 input RecipeLimit {
   cursor: String
   limit: Int!
+}
+
+interface Recipe_Fragment {
+  id: Int!
+  ingredients: [Recipe_Ing]
+  instructions: String
+  instructionssnippet: String
+  recipeCookTime: Int!
+  recipeHolder: [Users_Recipes]
+  recipeName: String!
+  recipeServings: Int!
 }
 
 type Recipe_Ing {

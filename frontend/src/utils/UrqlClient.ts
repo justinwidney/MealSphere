@@ -29,18 +29,35 @@ export const CursorPagination = (): Resolver => {
     }
 
     const fieldKey = `${fieldName}(${stringifyVariables(fieldArgs)})`;
-    const isItinCache = cache.resolve(entityKey, fieldKey);
+
+    const isItinCache = cache.resolve(
+      cache.resolve(entityKey, fieldKey) as string,
+      "Recipes"
+    );
 
     info.partial = !isItinCache;
     const results: string[] = [];
 
+    let hasMore = true;
+
     fieldInfos.forEach((fi) => {
-      const Recipes = cache.resolve(entityKey, fi.fieldKey) as string[];
-      console.log(Recipes);
+      const key = cache.resolve(entityKey, fi.fieldKey) as string;
+      const Recipes = cache.resolve(key, "Recipes") as string[];
+      const _hasMore = cache.resolve(key, "hasMore");
+      console.log(Recipes, "Recipes");
+
+      if (!_hasMore) {
+        hasMore = _hasMore as boolean;
+      }
+
       results.push(...Recipes);
     });
 
-    return results;
+    return {
+      __typename: "Pagination_Recipe",
+      hasMore: hasMore,
+      Recipes: results,
+    };
   };
 };
 
@@ -52,6 +69,9 @@ export const createUrqlClient = (ssrExchange: any) => ({
   exchanges: [
     dedupExchange,
     cacheExchange({
+      keys: {
+        Pagination_Recipe: () => null,
+      },
       resolvers: {
         Query: {
           allRecipes: CursorPagination(),

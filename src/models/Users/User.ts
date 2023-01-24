@@ -33,7 +33,6 @@ export const User_Query = extendType({
     t.nonNull.list.nonNull.field("allUsers", {
       type: "User",
       resolve: (_parent, _args, context) => {
-        console.log("test");
         return context.prisma.user.findMany();
       },
     });

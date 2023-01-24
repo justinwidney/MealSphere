@@ -27,8 +27,8 @@ export const Recipe_Query = extendType({
         });
       },
     }),
-      t.nonNull.list.nonNull.field("allRecipes", {
-        type: "Recipe",
+      t.nonNull.field("allRecipes", {
+        type: "Pagination_Recipe",
         args: {
           data: nonNull(
             arg({
@@ -38,7 +38,7 @@ export const Recipe_Query = extendType({
         },
 
         resolve: async (_parent, _args, context) => {
-          const realLimit = Math.min(50, _args.data.limit);
+          const realLimit = Math.min(50, _args.data.limit) + 1;
 
           const cursor = parseInt(_args.data.cursor);
 
@@ -62,13 +62,21 @@ export const Recipe_Query = extendType({
 
           const lastRecipeInResults = firstQueryResults[_args.data.limit - 1];
 
-          try {
-            const myCursor = lastRecipeInResults.id;
-          } catch (e) {
-            const myCursor = _args.data.cursor;
-          }
+          // try {
+          //   const myCursor = lastRecipeInResults.id;
+          // } catch (e) {
+          //   const myCursor = _args.data.cursor;
+          // }
 
-          return firstQueryResults;
+          // More Recipes
+          const hasMore = firstQueryResults.length === realLimit ? true : false;
+
+          console.log(firstQueryResults);
+
+          return {
+            hasMore: hasMore,
+            Recipes: firstQueryResults.slice(0, realLimit - 1),
+          };
         },
       });
     t.nonNull.list.nonNull.field("allUser_Recipes", {

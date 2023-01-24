@@ -120,9 +120,15 @@ export type MutationSignupUserArgs = {
   data: UserCreateInput;
 };
 
+export type Pagination_Recipe = {
+  __typename?: 'Pagination_Recipe';
+  Recipes?: Maybe<Array<Maybe<Recipe>>>;
+  hasMore: Scalars['Boolean'];
+};
+
 export type Query = {
   __typename?: 'Query';
-  allRecipes: Array<Recipe>;
+  allRecipes: Pagination_Recipe;
   allUser_Recipes: Array<Users_Recipes>;
   allUsers: Array<User>;
   currentUser?: Maybe<User>;
@@ -141,7 +147,7 @@ export type QueryRecipeByIdArgs = {
   id?: InputMaybe<Scalars['Int']>;
 };
 
-export type Recipe = {
+export type Recipe = Recipe_Fragment & {
   __typename?: 'Recipe';
   id: Scalars['Int'];
   ingredients?: Maybe<Array<Maybe<Recipe_Ing>>>;
@@ -168,6 +174,17 @@ export type RecipeCreateInput = {
 export type RecipeLimit = {
   cursor?: InputMaybe<Scalars['String']>;
   limit: Scalars['Int'];
+};
+
+export type Recipe_Fragment = {
+  id: Scalars['Int'];
+  ingredients?: Maybe<Array<Maybe<Recipe_Ing>>>;
+  instructions?: Maybe<Scalars['String']>;
+  instructionssnippet?: Maybe<Scalars['String']>;
+  recipeCookTime: Scalars['Int'];
+  recipeHolder?: Maybe<Array<Maybe<Users_Recipes>>>;
+  recipeName: Scalars['String'];
+  recipeServings: Scalars['Int'];
 };
 
 export type Recipe_Ing = {
@@ -250,7 +267,7 @@ export type RecipesQueryVariables = Exact<{
 }>;
 
 
-export type RecipesQuery = { __typename?: 'Query', allRecipes: Array<{ __typename?: 'Recipe', id: number, recipeName: string, instructionssnippet?: string | null }> };
+export type RecipesQuery = { __typename?: 'Query', allRecipes: { __typename?: 'Pagination_Recipe', hasMore: boolean, Recipes?: Array<{ __typename?: 'Recipe', id: number, recipeName: string, instructionssnippet?: string | null } | null> | null } };
 
 
 export const CreateRecipeDocument = gql`
@@ -300,9 +317,12 @@ export function useCurrentUserQuery(options?: Omit<Urql.UseQueryArgs<CurrentUser
 export const RecipesDocument = gql`
     query Recipes($limit: Int!, $cursor: String) {
   allRecipes(data: {limit: $limit, cursor: $cursor}) {
-    id
-    recipeName
-    instructionssnippet
+    hasMore
+    Recipes {
+      id
+      recipeName
+      instructionssnippet
+    }
   }
 }
     `;

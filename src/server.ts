@@ -15,6 +15,7 @@ import { ApolloServer } from "apollo-server-express";
 import { GraphQLLocalStrategy, buildContext } from "graphql-passport";
 import Redis from "ioredis";
 import connectRedis from "connect-redis";
+import depthLimit from "graphql-depth-limit";
 
 import {
   createNewUser,
@@ -190,6 +191,7 @@ const server = new ApolloServer({
     };
   },
   introspection: true, // Disable for production
+  validationRules: [depthLimit(3)],
 });
 
 // app.use(

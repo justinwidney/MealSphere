@@ -1,7 +1,10 @@
 query Recipes($limit: Int!, $cursor: String) {
   allRecipes(data: { limit: $limit, cursor: $cursor }) {
-    id
-    recipeName
-    instructionssnippet
+    hasMore
+    Recipes {
+      id
+      recipeName
+      instructionssnippet
+    }
   }
 }
