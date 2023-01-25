@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import NextLink from "next/link";
-import { useUser } from "../data/hooks/hooks";
+import { useUser } from "../../data/hooks/hooks";
 import { useRouter } from "next/router";
 interface TopBarProps {}
 

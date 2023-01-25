@@ -256,6 +256,13 @@ export type SignupMutationVariables = Exact<{
 
 export type SignupMutation = { __typename?: 'Mutation', signupUser: { __typename?: 'AuthPayload', token?: string | null, user?: { __typename?: 'User', id: number, username?: string | null } | null, Errors?: { __typename?: 'FieldError', field?: string | null, message?: string | null } | null } };
 
+export type RecipesbyIdQueryVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type RecipesbyIdQuery = { __typename?: 'Query', recipeById?: { __typename?: 'Recipe', id: number, recipeName: string, instructionssnippet?: string | null } | null };
+
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -301,6 +308,19 @@ export const SignupDocument = gql`
 
 export function useSignupMutation() {
   return Urql.useMutation<SignupMutation, SignupMutationVariables>(SignupDocument);
+};
+export const RecipesbyIdDocument = gql`
+    query RecipesbyID($id: Int!) {
+  recipeById(id: $id) {
+    id
+    recipeName
+    instructionssnippet
+  }
+}
+    `;
+
+export function useRecipesbyIdQuery(options: Omit<Urql.UseQueryArgs<RecipesbyIdQueryVariables>, 'query'>) {
+  return Urql.useQuery<RecipesbyIdQuery, RecipesbyIdQueryVariables>({ query: RecipesbyIdDocument, ...options });
 };
 export const CurrentUserDocument = gql`
     query currentUser {

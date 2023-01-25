@@ -43,13 +43,16 @@ export const ItemCard: React.FC<ItemCardProps> = ({
       borderRadius={3}
     >
       <CardBody>
-        <Heading mb={4} size="sm">
-          {HeadingName}
-        </Heading>
-
         <HStack>
           <Box w="50%">
             <Stack spacing="0" mb={4}>
+              <Flex>
+                <Heading fontSize={16} pb={2}>
+                  {" "}
+                  {HeadingName}{" "}
+                </Heading>
+              </Flex>
+
               <Flex>
                 <Text fontSize="xs">{storeName}</Text>
                 <Text fontSize="xs" ml="auto">

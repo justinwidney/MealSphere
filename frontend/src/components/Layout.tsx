@@ -1,7 +1,7 @@
 import React from "react";
-import { CategoryBar } from "./CategoryBar";
-import { NavBar } from "./NavBar";
-import { TopBar } from "./TopBar";
+import { CategoryBar } from "../components/Header/CategoryBar";
+import { NavBar } from "./Header/NavBar";
+import { TopBar } from "./Header/TopBar";
 import { Wrapper, WrapperVariant } from "./Wrapper";
 
 interface LayoutProps {

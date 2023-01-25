@@ -1,4 +1,4 @@
-import { NavBar } from "../components/NavBar";
+import { NavBar } from "../components/Header/NavBar";
 import { A11y, Navigation, Pagination } from "swiper";
 import { withUrqlClient } from "next-urql";
 import { createUrqlClient } from "../utils/UrqlClient";
@@ -25,7 +25,7 @@ import {
 } from "@chakra-ui/react";
 import { Layout } from "../components/Layout";
 import { useState } from "react";
-import { CategoryCard } from "../components/CategoryCard";
+import { CategoryCard } from "../components/Category/CategoryCard";
 import { ItemCard } from "../components/Items/ItemCard";
 interface IndexProps {}
 
@@ -38,8 +38,6 @@ export const Index: React.FC<IndexProps> = ({}) => {
   });
 
   const [{ data, fetching }] = useRecipesQuery({ variables });
-
-  console.log(data, "MY DATA");
 
   return (
     <Layout>

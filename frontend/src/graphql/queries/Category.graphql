@@ -1,0 +1,7 @@
+query RecipesbyID($id: Int!) {
+  recipeById(id: $id) {
+    id
+    recipeName
+    instructionssnippet
+  }
+}

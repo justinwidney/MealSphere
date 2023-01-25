@@ -12,7 +12,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import NextLink from "next/link";
-import { useUser } from "../data/hooks/hooks";
+import { useUser } from "../../data/hooks/hooks";
 import { useRouter } from "next/router";
 import { MenuOutlined } from "@ant-design/icons";
 
@@ -24,14 +24,7 @@ export const CategoryBar: React.FC<CategoryBarProps> = ({}) => {
   const router = useRouter();
 
   return (
-    <Flex
-      zIndex={2}
-      position="sticky"
-      top={0}
-      p={4}
-      alignItems="center"
-      textAlign={"center"}
-    >
+    <Flex zIndex={2} top={0} p={4} alignItems="center" textAlign={"center"}>
       <HStack spacing="24px">
         <HStack>
           <MenuOutlined />
