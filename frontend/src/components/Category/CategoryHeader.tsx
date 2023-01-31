@@ -37,9 +37,12 @@ export const CategoryHeader: React.FC<CategoryHeaderProps> = ({ Header }) => {
       >
         <Heading> {Header} </Heading>
       </Flex>
-      <HStack margin={4}>
+      <HStack margin={4} justifyContent="flex-start" pb={4}>
         {fruits?.map((_p) => (
-          <Button key={_p.value}> {_p.value} </Button>
+          <Button width="15%" key={_p.value}>
+            {" "}
+            {_p.value}{" "}
+          </Button>
         ))}
       </HStack>
     </>

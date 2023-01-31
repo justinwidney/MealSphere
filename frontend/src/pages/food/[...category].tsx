@@ -11,6 +11,7 @@ import { useRecipesbyIdQuery } from "../../generated/graphql";
 import { Layout } from "../../components/Layout";
 import { CategoryHeader } from "../../components/Category/CategoryHeader";
 import { CategoryBody } from "../../components/Category/CategoryBody";
+import { totalmem } from "os";
 
 const Food: NextPage<{}> = ({}) => {
   const router = useRouter();
@@ -18,6 +19,9 @@ const Food: NextPage<{}> = ({}) => {
   const categoryPath = (router.query.category as string[]) || [];
 
   console.log(categoryPath, "my path");
+
+  const title = categoryPath.at(-1);
+  console.log(title);
 
   const intId =
     typeof router.query.id === "number" ? parseInt(router.query.id) : 1;
@@ -38,10 +42,12 @@ const Food: NextPage<{}> = ({}) => {
   }
 
   return (
-    <Layout variant="regular">
-      <CategoryHeader Header="Meat Products" />
-      <CategoryBody />
-    </Layout>
+    <>
+      <Layout variant="regular">
+        <CategoryHeader Header={title} />
+        <CategoryBody />
+      </Layout>
+    </>
   );
 };
 

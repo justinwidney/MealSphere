@@ -41,7 +41,7 @@ export const SaleItems: React.FC<SaleItemsProps> = ({}) => {
         >
           {fruits.map((_p) => (
             <>
-              <SwiperSlide>
+              <SwiperSlide key={_p.label}>
                 <div>
                   <ItemCard
                     marginBottom={10}
@@ -49,6 +49,7 @@ export const SaleItems: React.FC<SaleItemsProps> = ({}) => {
                     HeadingName={_p.label}
                     storeName={_p.label}
                     storePrice={"9"}
+                    sale={true}
                     storeDescription={""}
                     storeVolume={""}
                   ></ItemCard>{" "}

@@ -26,7 +26,7 @@ interface CategoryBodyProps {}
 export const CategoryBody: React.FC<CategoryBodyProps> = ({}) => {
   return (
     <Flex>
-      <VStack justifyContent={"flex-start"}>
+      <VStack justifyContent={"flex-start"} w={350} margin={4}>
         <CategorySearchBox />
         <PriceBox />
         <OptionsBox />

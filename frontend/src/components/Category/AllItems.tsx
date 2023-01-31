@@ -56,10 +56,8 @@ export const AllItems: React.FC<AllItemsProps> = ({}) => {
   return (
     <>
       <Box w={"inherit"} borderWidth="1px" paddingLeft={10} paddingRight={10}>
-        <HStack>
-          <Heading p={2} fontSize={20} paddingBottom={4}>
-            Filter By
-          </Heading>
+        <HStack paddingBottom={4} pt={4}>
+          <Heading fontSize={20}>Filter By</Heading>
           <Select placeholder="Dietary" w="125px">
             <option value="option1">Option 1</option>
             <option value="option2">Option 2</option>
@@ -83,9 +81,7 @@ export const AllItems: React.FC<AllItemsProps> = ({}) => {
             />
             <InputRightElement children={"test"} />
           </InputGroup>
-          <Heading p={2} fontSize={20} paddingBottom={4}>
-            Sort By
-          </Heading>
+          <Heading fontSize={20}>Sort By</Heading>
           <Select placeholder="Store" w="100px">
             <option value="option1">Option 1</option>
             <option value="option2">Option 2</option>
@@ -99,18 +95,18 @@ export const AllItems: React.FC<AllItemsProps> = ({}) => {
           <InfiniteScroll
             dataLength={data?.allRecipes.Recipes?.length}
             next={fetchMoreData}
-            hasMore={data.allRecipes.hasMore}
+            hasMore={data?.allRecipes.hasMore}
             loader={<h4>Loading...</h4>}
           >
-            <Grid templateColumns="repeat(4, 1fr)" gap={6} mt={4}>
-              {data?.allRecipes?.Recipes.map((_p) => (
+            <Grid templateColumns="repeat(4, 1fr)" gap={6}>
+              {data?.allRecipes!.Recipes!.map((_p) => (
                 <>
                   <GridItem>
                     <ItemCard
+                      key={_p?.id}
                       marginBottom={10}
-                      key={_p?.recipeName}
-                      HeadingName={_p.recipeName}
-                      storeName={_p.recipeName}
+                      HeadingName={_p!.recipeName}
+                      storeName={_p!.recipeName}
                       storePrice={"9"}
                       storeDescription={""}
                       storeVolume={""}

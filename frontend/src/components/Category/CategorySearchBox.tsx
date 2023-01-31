@@ -25,7 +25,7 @@ interface CategorySearchBoxProps {}
 
 export const CategorySearchBox: React.FC<CategorySearchBoxProps> = ({}) => {
   return (
-    <Card p={4} m={4}>
+    <Card p={4} m={4} w="inherit">
       <CardBody>
         <Stack divider={<StackDivider w={10} />} spacing="4">
           <Heading> Meat Products</Heading>
