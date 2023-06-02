@@ -3,13 +3,11 @@ import {
   Flex,
   Link,
   Button,
-  Text,
   Input,
   InputGroup,
   InputLeftAddon,
   Stack,
   HStack,
-  InputRightAddon,
   InputRightElement,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
@@ -55,14 +53,22 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
   }
 
   return (
-    <Flex zIndex={2} top={0} bg="white" p={4} ml={"auto"}>
-      <HStack>
+    <Flex
+      zIndex={2}
+      top={0}
+      bg="white"
+      p={4}
+      ml={"auto"}
+      w="100%"
+      justify="space-between"
+    >
+      <HStack w="full">
         <Box ml={"left"}>
-          <Text> MealSphere</Text>
+          <Link href="/"> MealSphere</Link>
         </Box>
 
-        <Stack spacing={4}>
-          <InputGroup w={"1000px"}>
+        <Stack spacing={4} w="inherit">
+          <InputGroup w="full" maxWidth={1336} flexGrow={1}>
             <InputLeftAddon borderRadius="10" children="ALL" />
             <Input
               borderRadius="10"

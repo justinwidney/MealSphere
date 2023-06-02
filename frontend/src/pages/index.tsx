@@ -41,14 +41,14 @@ export const Index: React.FC<IndexProps> = ({}) => {
 
   return (
     <Layout>
-      <Flex alignItems="end" mb={4}>
+      <Flex alignItems="end" mb={4} p={4}>
         <Heading>Top Categories</Heading>
         <Text ml={4} color="green">
           View All
         </Text>
       </Flex>
       <Divider mb={4} w="15%" />
-      <Grid templateColumns="repeat(4, 1fr)" gap={5} marginBottom={5}>
+      <Grid templateColumns="repeat(4, 1fr)" gap={5} marginBottom={5} p={4}>
         <GridItem>
           <CategoryCard
             HeadingName="BreakFast"

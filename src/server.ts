@@ -1,5 +1,4 @@
 import express from "express";
-import { graphqlHTTP } from "express-graphql";
 import { schema } from "./schema";
 import prisma from "./db";
 import cors from "cors";
@@ -7,14 +6,10 @@ import morgan from "morgan";
 import session from "express-session";
 import errorhandler from "errorhandler";
 import { getUserId } from "./modules/utils";
-import { comparePassword } from "./modules/auth";
 import passport from "passport";
 import LocalStrategy from "passport-local";
 import BearerStrategy from "passport-http-bearer";
 import { ApolloServer } from "apollo-server-express";
-import { GraphQLLocalStrategy, buildContext } from "graphql-passport";
-import Redis from "ioredis";
-import connectRedis from "connect-redis";
 import depthLimit from "graphql-depth-limit";
 
 import {

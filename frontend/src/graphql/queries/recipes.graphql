@@ -1,4 +1,4 @@
-query Recipes($limit: Int!, $cursor: String) {
+query Recipes($limit: Int!, $cursor: String, $recipeName: String) {
   allRecipes(data: { limit: $limit, cursor: $cursor }) {
     hasMore
     Recipes {

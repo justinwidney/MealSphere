@@ -29,6 +29,16 @@ declare global {
 }
 
 export interface NexusGenInputs {
+  CategoryAddInput: { // input type
+    recipeid: number; // Int!
+  }
+  CategoryCreateInput: { // input type
+    content?: string | null; // String
+    recipeCookTime: number; // Int!
+    recipeName: string; // String!
+    recipeServings: number; // Int!
+    skillLvl?: number | null; // Int
+  }
   ChangePasswordInput: { // input type
     password: string; // String!
     token: string; // String!
@@ -61,6 +71,20 @@ export interface NexusGenInputs {
     cursor?: string | null; // String
     limit: number; // Int!
   }
+  StoreCreateInput: { // input type
+    StoreAddress: string; // String!
+    StoreCity: string; // String!
+    StoreDescription: string; // String!
+    StoreEmail: string; // String!
+    StoreHours: string; // String!
+    StoreName: string; // String!
+    StorePhone: string; // String!
+    StoreState: string; // String!
+    StoreWebsite: string; // String!
+    StoreZip?: string | null; // String
+    storeLat?: string | null; // String
+    storeLong?: string | null; // String
+  }
   UserCreateInput: { // input type
     email: string; // String!
     password: string; // String!
@@ -69,6 +93,11 @@ export interface NexusGenInputs {
   UserUniqueInput: { // input type
     email?: string | null; // String
     id?: number | null; // Int
+  }
+  Users_CategorysInput: { // input type
+    amount?: number | null; // Int
+    id?: number | null; // Int
+    recipesid: number; // Int!
   }
   Users_IngredientsInput: { // input type
     amount?: number | null; // Int
@@ -100,6 +129,14 @@ export interface NexusGenObjects {
     token?: string | null; // String
     user?: NexusGenRootTypes['User'] | null; // User
   }
+  Category: { // root type
+    Calories: number; // Int!
+    Fat: number; // Int!
+    IngDescription?: string | null; // String
+    IngName: string; // String!
+    Protein: number; // Int!
+    id: number; // Int!
+  }
   FieldError: { // root type
     field?: string | null; // String
     message?: string | null; // String
@@ -130,6 +167,17 @@ export interface NexusGenObjects {
     amount?: string | null; // String
     id: number; // Int!
   }
+  Store: { // root type
+    id: number; // Int!
+    storeAddress: string; // String!
+    storeCity: string; // String!
+    storeHours?: string | null; // String
+    storeLat: string; // String!
+    storeLong: string; // String!
+    storeName: string; // String!
+    storeState: string; // String!
+    storeWebsite?: string | null; // String
+  }
   User: { // root type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     email: string; // String!
@@ -137,6 +185,7 @@ export interface NexusGenObjects {
     password: string; // String!
     username?: string | null; // String
   }
+  User_Store: {};
   Users_Recipes: { // root type
     amount: number; // Int!
     id: number; // Int!
@@ -160,6 +209,15 @@ export interface NexusGenFieldTypes {
     token: string | null; // String
     user: NexusGenRootTypes['User'] | null; // User
   }
+  Category: { // field return type
+    Calories: number; // Int!
+    Fat: number; // Int!
+    IngDescription: string | null; // String
+    IngName: string; // String!
+    Protein: number; // Int!
+    id: number; // Int!
+    recipeHolder: NexusGenRootTypes['Recipe_Ing'][]; // [Recipe_Ing!]!
+  }
   FieldError: { // field return type
     field: string | null; // String
     message: string | null; // String
@@ -174,11 +232,14 @@ export interface NexusGenFieldTypes {
     recipeHolder: NexusGenRootTypes['Recipe_Ing'][]; // [Recipe_Ing!]!
   }
   Mutation: { // field return type
+    addCategoryToRecipe: NexusGenRootTypes['Category'] | null; // Category
     addIngredientToRecipe: NexusGenRootTypes['Ingredient'] | null; // Ingredient
     addRecipeToUser: NexusGenRootTypes['Recipe'] | null; // Recipe
     changePassword: NexusGenRootTypes['User']; // User!
+    createCategory: NexusGenRootTypes['Category'] | null; // Category
     createIngredient: NexusGenRootTypes['Ingredient'] | null; // Ingredient
     createRecipe: NexusGenRootTypes['Recipe'] | null; // Recipe
+    createStore: NexusGenRootTypes['Store'] | null; // Store
     deleteRecipe: NexusGenRootTypes['Recipe'] | null; // Recipe
     forgotPassword: NexusGenRootTypes['User']; // User!
     login: NexusGenRootTypes['AuthPayload']; // AuthPayload!
@@ -189,12 +250,16 @@ export interface NexusGenFieldTypes {
     hasMore: boolean; // Boolean!
   }
   Query: { // field return type
+    StoresId: NexusGenRootTypes['Store'] | null; // Store
     allRecipes: NexusGenRootTypes['Pagination_Recipe']; // Pagination_Recipe!
     allUser_Recipes: NexusGenRootTypes['Users_Recipes'][]; // [Users_Recipes!]!
+    allUser_Stores: NexusGenRootTypes['User_Store'][]; // [User_Store!]!
     allUsers: NexusGenRootTypes['User'][]; // [User!]!
     currentUser: NexusGenRootTypes['User'] | null; // User
+    myCategorys: NexusGenRootTypes['User'][]; // [User!]!
     myIngredients: NexusGenRootTypes['User'][]; // [User!]!
     myRecipes: NexusGenRootTypes['User'][]; // [User!]!
+    myStores: NexusGenRootTypes['User'][]; // [User!]!
     recipeById: NexusGenRootTypes['Recipe'] | null; // Recipe
   }
   Recipe: { // field return type
@@ -214,6 +279,18 @@ export interface NexusGenFieldTypes {
     ingredient: NexusGenRootTypes['Ingredient'] | null; // Ingredient
     recipe: NexusGenRootTypes['Recipe'] | null; // Recipe
   }
+  Store: { // field return type
+    User_Store: Array<NexusGenRootTypes['User_Store'] | null> | null; // [User_Store]
+    id: number; // Int!
+    storeAddress: string; // String!
+    storeCity: string; // String!
+    storeHours: string | null; // String
+    storeLat: string; // String!
+    storeLong: string; // String!
+    storeName: string; // String!
+    storeState: string; // String!
+    storeWebsite: string | null; // String
+  }
   User: { // field return type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     email: string; // String!
@@ -221,6 +298,10 @@ export interface NexusGenFieldTypes {
     password: string; // String!
     recipes: NexusGenRootTypes['Users_Recipes'][]; // [Users_Recipes!]!
     username: string | null; // String
+  }
+  User_Store: { // field return type
+    store: NexusGenRootTypes['Store'] | null; // Store
+    user: NexusGenRootTypes['User'] | null; // User
   }
   Users_Recipes: { // field return type
     amount: number; // Int!
@@ -246,6 +327,15 @@ export interface NexusGenFieldTypeNames {
     token: 'String'
     user: 'User'
   }
+  Category: { // field return type name
+    Calories: 'Int'
+    Fat: 'Int'
+    IngDescription: 'String'
+    IngName: 'String'
+    Protein: 'Int'
+    id: 'Int'
+    recipeHolder: 'Recipe_Ing'
+  }
   FieldError: { // field return type name
     field: 'String'
     message: 'String'
@@ -260,11 +350,14 @@ export interface NexusGenFieldTypeNames {
     recipeHolder: 'Recipe_Ing'
   }
   Mutation: { // field return type name
+    addCategoryToRecipe: 'Category'
     addIngredientToRecipe: 'Ingredient'
     addRecipeToUser: 'Recipe'
     changePassword: 'User'
+    createCategory: 'Category'
     createIngredient: 'Ingredient'
     createRecipe: 'Recipe'
+    createStore: 'Store'
     deleteRecipe: 'Recipe'
     forgotPassword: 'User'
     login: 'AuthPayload'
@@ -275,12 +368,16 @@ export interface NexusGenFieldTypeNames {
     hasMore: 'Boolean'
   }
   Query: { // field return type name
+    StoresId: 'Store'
     allRecipes: 'Pagination_Recipe'
     allUser_Recipes: 'Users_Recipes'
+    allUser_Stores: 'User_Store'
     allUsers: 'User'
     currentUser: 'User'
+    myCategorys: 'User'
     myIngredients: 'User'
     myRecipes: 'User'
+    myStores: 'User'
     recipeById: 'Recipe'
   }
   Recipe: { // field return type name
@@ -300,6 +397,18 @@ export interface NexusGenFieldTypeNames {
     ingredient: 'Ingredient'
     recipe: 'Recipe'
   }
+  Store: { // field return type name
+    User_Store: 'User_Store'
+    id: 'Int'
+    storeAddress: 'String'
+    storeCity: 'String'
+    storeHours: 'String'
+    storeLat: 'String'
+    storeLong: 'String'
+    storeName: 'String'
+    storeState: 'String'
+    storeWebsite: 'String'
+  }
   User: { // field return type name
     createdAt: 'DateTime'
     email: 'String'
@@ -307,6 +416,10 @@ export interface NexusGenFieldTypeNames {
     password: 'String'
     recipes: 'Users_Recipes'
     username: 'String'
+  }
+  User_Store: { // field return type name
+    store: 'Store'
+    user: 'User'
   }
   Users_Recipes: { // field return type name
     amount: 'Int'
@@ -328,6 +441,9 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
+    addCategoryToRecipe: { // args
+      data: NexusGenInputs['CategoryAddInput']; // CategoryAddInput!
+    }
     addIngredientToRecipe: { // args
       data: NexusGenInputs['IngredientAddInput']; // IngredientAddInput!
     }
@@ -337,11 +453,17 @@ export interface NexusGenArgTypes {
     changePassword: { // args
       data: NexusGenInputs['ChangePasswordInput']; // ChangePasswordInput!
     }
+    createCategory: { // args
+      data: NexusGenInputs['CategoryCreateInput']; // CategoryCreateInput!
+    }
     createIngredient: { // args
       data: NexusGenInputs['IngredientCreateInput']; // IngredientCreateInput!
     }
     createRecipe: { // args
       data: NexusGenInputs['RecipeCreateInput']; // RecipeCreateInput!
+    }
+    createStore: { // args
+      data: NexusGenInputs['StoreCreateInput']; // StoreCreateInput!
     }
     deleteRecipe: { // args
       id: number; // Int!
@@ -357,6 +479,9 @@ export interface NexusGenArgTypes {
     }
   }
   Query: {
+    StoresId: { // args
+      id?: number | null; // Int
+    }
     allRecipes: { // args
       data: NexusGenInputs['RecipeLimit']; // RecipeLimit!
     }

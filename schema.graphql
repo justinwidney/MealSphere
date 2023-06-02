@@ -8,6 +8,28 @@ type AuthPayload {
   user: User
 }
 
+type Category {
+  Calories: Int!
+  Fat: Int!
+  IngDescription: String
+  IngName: String!
+  Protein: Int!
+  id: Int!
+  recipeHolder: [Recipe_Ing!]!
+}
+
+input CategoryAddInput {
+  recipeid: Int!
+}
+
+input CategoryCreateInput {
+  content: String
+  recipeCookTime: Int!
+  recipeName: String!
+  recipeServings: Int!
+  skillLvl: Int
+}
+
 input ChangePasswordInput {
   password: String!
   token: String!
@@ -51,11 +73,14 @@ input IngredientCreateInput {
 }
 
 type Mutation {
+  addCategoryToRecipe(data: CategoryAddInput!): Category
   addIngredientToRecipe(data: IngredientAddInput!): Ingredient
   addRecipeToUser(data: RecipeAddInput!): Recipe
   changePassword(data: ChangePasswordInput!): User!
+  createCategory(data: CategoryCreateInput!): Category
   createIngredient(data: IngredientCreateInput!): Ingredient
   createRecipe(data: RecipeCreateInput!): Recipe
+  createStore(data: StoreCreateInput!): Store
   deleteRecipe(id: Int!): Recipe
   forgotPassword(data: ForgotPasswordInput!): User!
   login(data: UserCreateInput!): AuthPayload!
@@ -68,12 +93,16 @@ type Pagination_Recipe {
 }
 
 type Query {
+  StoresId(id: Int): Store
   allRecipes(data: RecipeLimit!): Pagination_Recipe!
   allUser_Recipes: [Users_Recipes!]!
+  allUser_Stores: [User_Store!]!
   allUsers: [User!]!
   currentUser: User
+  myCategorys: [User!]!
   myIngredients: [User!]!
   myRecipes: [User!]!
+  myStores: [User!]!
   recipeById(id: Int): Recipe
 }
 
@@ -124,6 +153,34 @@ type Recipe_Ing {
   recipe: Recipe
 }
 
+type Store {
+  User_Store: [User_Store]
+  id: Int!
+  storeAddress: String!
+  storeCity: String!
+  storeHours: String
+  storeLat: String!
+  storeLong: String!
+  storeName: String!
+  storeState: String!
+  storeWebsite: String
+}
+
+input StoreCreateInput {
+  StoreAddress: String!
+  StoreCity: String!
+  StoreDescription: String!
+  StoreEmail: String!
+  StoreHours: String!
+  StoreName: String!
+  StorePhone: String!
+  StoreState: String!
+  StoreWebsite: String!
+  StoreZip: String
+  storeLat: String
+  storeLong: String
+}
+
 type User {
   createdAt: DateTime!
   email: String!
@@ -142,6 +199,17 @@ input UserCreateInput {
 input UserUniqueInput {
   email: String
   id: Int
+}
+
+type User_Store {
+  store: Store
+  user: User
+}
+
+input Users_CategorysInput {
+  amount: Int
+  id: Int
+  recipesid: Int!
 }
 
 input Users_IngredientsInput {

@@ -13,6 +13,9 @@ import React, { useState } from "react";
 import NextLink from "next/link";
 import { useUser } from "../../data/hooks/hooks";
 import { useRouter } from "next/router";
+
+import { EnvironmentOutlined } from "@ant-design/icons";
+
 interface TopBarProps {}
 
 export const TopBar: React.FC<TopBarProps> = ({}) => {
@@ -30,9 +33,11 @@ export const TopBar: React.FC<TopBarProps> = ({}) => {
       textAlign={"center"}
     >
       <HStack>
-        <Text fontSize="md">Store Area</Text>
-
-        <Text color={"green"} fontSize="md">
+        <Text fontSize="md" fontWeight="bold">
+          Store Area
+        </Text>
+        <EnvironmentOutlined style={{ color: "356F35" }} />;
+        <Text color={"#356F35"} fontSize="md">
           4101 Bassel Street, Montreal, QC H3A 1T1
         </Text>
       </HStack>

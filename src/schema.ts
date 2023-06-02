@@ -15,6 +15,10 @@ import * as User from "./models/Users";
 import { Users_Recipes } from "./models/Users_Recipes";
 import * as Recipe from "./models/Recipes";
 import * as Ingredient from "./models/Ingredients";
+import * as PostalCode from "./models/PostalCodes";
+import * as Store from "./models/Stores";
+import * as User_Store from "./models/User_Stores";
+import * as Category from "./models/Categories";
 
 import { DateTimeResolver } from "graphql-scalars";
 import { Recipe_Ing } from "./models/Recipe_Ing";
@@ -103,10 +107,13 @@ export const schema = makeSchema({
     Recipe,
     Users_Recipes,
     User,
+    User_Store,
+    Store,
     FieldError,
     AuthPayload,
     Recipe_Ing,
     Ingredient,
+    Category,
     ForgotPasswordInput,
     ChangePasswordInput,
     DateTime,

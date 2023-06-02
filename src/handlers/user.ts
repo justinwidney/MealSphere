@@ -15,6 +15,8 @@ export const createNewUser = async (req, res, next) => {
     res.json({ token });
     return;
   } catch (error) {
+    console.log(error);
+
     res.status(401);
     res.json({
       Errors: { field: "username", message: "username is taken" },

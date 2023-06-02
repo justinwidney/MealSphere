@@ -8,74 +8,122 @@ generator client {
   provider = "prisma-client-js"
 }
 
-
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id        Int   @id @default(autoincrement()) @unique
+  id        Int      @id @unique @default(autoincrement())
   username  String   @unique
-  email String @unique 
+  email     String   @unique
   password  String
   createdAt DateTime @default(now())
 
-  recipes Users_Recipes[] 
+  recipes    Users_Recipes[]
+  User_Store User_Store[]
 }
 
 model Users_Recipes {
+  user   User? @relation(fields: [userid], references: [id])
+  userid Int
+
+  recipes   Recipe? @relation(fields: [recipesid], references: [id])
+  recipesid Int
+
   @@id([recipesid, userid])
-  
-  user         User? @relation(fields: [userid], references: [id])
-  userid       Int
-    
-  recipes        Recipe? @relation(fields: [recipesid], references: [id])
-  recipesid       Int
-
   @@unique([userid, recipesid], name: "recipeIndentifier")
-
 }
 
 model Recipe {
-  id Int @id @default(autoincrement())
-  recipeName     String @unique
+  id             Int     @id @default(autoincrement())
+  recipeName     String  @unique
   recipeCookTime Int
   recipeServings Int
   skillLvl       Int?
-  instructions String?
+  instructions   String?
 
   recipeHolder Users_Recipes[]
-  ingredients Recipe_Ing[]
-  
+  ingredients  Recipe_Ing[]
+  stores       Recipe_Store[]
+}
+
+model Recipe_Store {
+  recipe Recipe? @relation(fields: [userid], references: [id])
+  userid Int
+
+  store Store? @relation(fields: [storeid], references: [id])
+  storeid Int
+
+  price Float
+
+  @@id([storeid, userid])
+  @@unique([userid, storeid], name: "PriceIndentifier")
 }
 
 
+model Store {
+  id           Int          @id @unique @default(autoincrement())
+  storeName    String
+  storeAddress String
+  storeLat     Float
+  storeLong    Float
+  storeCity    String
+  storeState   String
+  storeWebsite String?
+  storeHours   String?
+  User_Store   User_Store[]
+  Recipe_Store Recipe_Store[]
+}
+
+model Categories {
+  id           Int          @id @unique @default(autoincrement())
+  categoriesName    String
+  subCategories String  
+  @@unique([categoriesName, subCategories], name: "categoriesIndentifier")
+}
+
+model PostalCode {
+  id           Int     @id @unique @default(autoincrement())
+  postalCode   String  @unique
+  postalCity   String
+  postalRegion String?
+  postalLat    Float
+  postalLong   Float
+}
+
+model User_Store {
+  user   User? @relation(fields: [userid], references: [id])
+  userid Int
+
+  store   Store? @relation(fields: [storeid], references: [id])
+  storeid Int
+
+  @@id([storeid, userid])
+  @@unique([userid, storeid], name: "storeIndentifier")
+}
 
 model Ingredient {
-  id Int @id @default(autoincrement())
-  IngName     String @unique
+  id             Int    @id @default(autoincrement())
+  IngName        String @unique
   IngDescription String
-  Calories Int
-  Fat Int @default(0)
-  Protein Int @default(0)
+  Calories       Int
+  Fat            Int    @default(0)
+  Protein        Int    @default(0)
 
   recipeHolder Recipe_Ing[]
-  
 }
 
 model Recipe_Ing {
-  id Int  @id @default(autoincrement())
+  id     Int     @id @default(autoincrement())
   amount Int
-  Sauce Boolean @default(false)
+  Sauce  Boolean @default(false)
 
-  ingredient         Ingredient? @relation(fields: [Ingredientid], references: [id])
-  Ingredientid       Int?
-    
-  recipe        Recipe? @relation(fields: [recipeid], references: [id])
-  recipeid       Int?
+  ingredient   Ingredient? @relation(fields: [Ingredientid], references: [id])
+  Ingredientid Int?
+
+  recipe   Recipe? @relation(fields: [recipeid], references: [id])
+  recipeid Int?
 
   @@unique([Ingredientid, recipeid])
-
 }
